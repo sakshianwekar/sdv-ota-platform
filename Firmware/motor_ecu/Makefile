@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -Iinclude
+CFLAGS = -Wall -Iinclude
 
 SRC = src/main.c \
       src/version.c \
@@ -8,12 +8,13 @@ SRC = src/main.c \
       src/heartbeat.c \
       src/diagnostics.c
 
-OUT = build/motor_ecu
+OUT = build/motor_ecu.exe
 
 all:
-	mkdir -p build
+	@if not exist build mkdir build
 	$(CC) $(CFLAGS) $(SRC) -o $(OUT)
 
 clean:
-	rm -f $(OUT)
-	
+	del /Q build\*
+
+rebuild: clean all
