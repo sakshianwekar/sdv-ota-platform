@@ -12,7 +12,7 @@ int check_ecu_health(void)
     long current_time;
 
     fp = fopen(
-        "../Virtual_ECU/MotorECU/runtime/heartbeat.txt",
+        "../../Virtual_ECU/MotorECU/runtime/heartbeat.txt",
         "r"
     );
 
