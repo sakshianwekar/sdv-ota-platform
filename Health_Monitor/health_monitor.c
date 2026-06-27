@@ -8,9 +8,26 @@
  * Phase 11 will extend this file to call bootloader rollback on failure.
  */
 
+/*
+ * health_monitor.c  —  Health_Monitor/health_monitor.c
+ *
+ * Phase 5 change: main() moved here from health_monitor.h (header fix).
+ * check_ecu_health() logic is UNCHANGED.
+ * Phase 11 will extend this to call bootloader rollback on failure.
+ */
+
 #include "health_monitor.h"
 #include <stdio.h>
 #include <time.h>
+
+/* Platform sleep — includes MUST be at file top, never inside a function */
+#ifdef _WIN32
+  #include <windows.h>
+  #define SLEEP_1S() Sleep(1000)
+#else
+  #include <unistd.h>
+  #define SLEEP_1S() sleep(1)
+#endif
 
 #define HEARTBEAT_FILE \
     "../../Virtual_ECU/MotorECU/runtime/heartbeat.txt"
@@ -49,9 +66,8 @@ int check_ecu_health(void)
 
 /* -------------------------------------------------------------------------
  * main() — moved here from health_monitor.h
- *
- * Phase 11 will change this loop to call bootloader rollback when
- * check_ecu_health() returns 0 during the post-activation grace period.
+ * Phase 11 will add bootloader rollback call when health check fails
+ * during the post-activation grace period.
  * ---------------------------------------------------------------------- */
 int main(void)
 {
@@ -59,17 +75,7 @@ int main(void)
 
     while (1) {
         check_ecu_health();
-
-        /* Sleep 1 second between checks.
-         * Using a portable approach: on POSIX this is sleep(1),
-         * on Windows it's Sleep(1000). */
-#ifdef _WIN32
-        #include <windows.h>
-        Sleep(1000);
-#else
-        #include <unistd.h>
-        sleep(1);
-#endif
+        SLEEP_1S();
     }
 
     return 0;
