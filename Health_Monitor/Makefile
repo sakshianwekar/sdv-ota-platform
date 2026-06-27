@@ -1,14 +1,23 @@
-CC = gcc
+CC     = gcc
+CFLAGS = -Wall -Wextra -I.
 
-CFLAGS = -Wall -Iinclude
+SRC = health_monitor.c
 
-SRC =health_monitor.c
-
-OUT = build/health_monitor
+ifeq ($(OS),Windows_NT)
+    OUT   = build/health_monitor.exe
+    MKDIR = if not exist build mkdir build
+    CLEAN = del /Q build\*
+else
+    OUT   = build/health_monitor
+    MKDIR = mkdir -p build
+    CLEAN = rm -rf build/*
+endif
 
 all:
-	mkdir build
+	$(MKDIR)
 	$(CC) $(CFLAGS) $(SRC) -o $(OUT)
 
 clean:
-	rm -rf build/*
+	$(CLEAN)
+
+rebuild: clean all
