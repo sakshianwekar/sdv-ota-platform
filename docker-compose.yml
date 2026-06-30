@@ -1,0 +1,26 @@
+services:
+
+  sdv_ota:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sdv_ota
+    volumes:
+      - .:/app
+      - sdv_build_cache:/app/.build_cache
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sdv_dev
+    volumes:
+      - .:/app
+      - sdv_build_cache:/app/.build_cache
+    entrypoint: bash
+    stdin_open: true
+    tty: true
+    command: []
+
+volumes:
+  sdv_build_cache:
