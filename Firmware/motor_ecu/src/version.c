@@ -20,8 +20,7 @@
  * The ECU binary runs from Firmware/motor_ecu/build/, so:
  *   ../../.. = repo root
  */
-#define VERSION_JSON_PATH \
-    "../../../Virtual_ECU/MotorECU/config/version.json"
+#define VERSION_JSON_PATH "Virtual_ECU/MotorECU/config/version.json"
 
 /* Static buffer — get_version() returns a pointer to this */
 static char s_version[VERSION_STR_MAX] = "unknown";

@@ -198,21 +198,33 @@ int check_ecu_health_with_rollback(void)
  * ---------------------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
+    int grace_mode = 0;
+    int duration = 0;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--grace") == 0) {
+            grace_mode = 1;
+        } else if (strcmp(argv[i], "--duration") == 0 && i + 1 < argc) {
+            duration = atoi(argv[++i]);
+        }
+    }
+
     printf("[health_monitor] Starting\n");
     printf("[health_monitor] Heartbeat timeout : %ds\n", HEARTBEAT_TIMEOUT);
     printf("[health_monitor] Grace period      : %ds\n", GRACE_PERIOD_SECONDS);
-    printf("[health_monitor] Failure threshold : %d consecutive failures\n\n",
+    printf("[health_monitor] Failure threshold : %d consecutive failures\n",
            FAILURE_THRESHOLD);
+    if (duration > 0) {
+        printf("[health_monitor] Duration limit    : %ds\n", duration);
+    }
+    printf("\n");
 
-    /*
-     * If called with --grace argument, start grace period immediately.
-     * This is how the Installer (Phase 10) will call it after activation:
-     *   ./Health_Monitor/build/health_monitor --grace
-     */
-    if (argc > 1 && strcmp(argv[1], "--grace") == 0) {
+    if (grace_mode) {
         ota_log("INFO", "Started in grace period mode (post-activation)");
         hm_start_grace_period();
     }
+
+    time_t start = time(NULL);
 
     while (1) {
         int result = check_ecu_health_with_rollback();
@@ -220,7 +232,11 @@ int main(int argc, char *argv[])
         if (result == -1) {
             ota_log("INFO",
                 "Rollback triggered — health monitor returning to normal mode");
-            /* Continue monitoring after rollback */
+        }
+
+        if (duration > 0 && (time(NULL) - start) >= duration) {
+            ota_log("INFO", "Duration reached — exiting health monitor");
+            break;
         }
 
         SLEEP_1S();

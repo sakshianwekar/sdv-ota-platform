@@ -35,6 +35,8 @@ extern "C" {
 #define ECU_BINARY_RELPATH_A  "Virtual_ECU/MotorECU/flash/slotA/motor_ecu"
 #define ECU_BINARY_RELPATH_B  "Virtual_ECU/MotorECU/flash/slotB/motor_ecu"
 #define ECU_PIDFILE           "Virtual_ECU/MotorECU/runtime/ecu.pid"
+#define PENDING_VERSION_FILE  "Virtual_ECU/MotorECU/config/pending_version.txt"
+#define PREVIOUS_VERSION_FILE "Virtual_ECU/MotorECU/config/previous_version.txt"
 
 /* -------------------------------------------------------------------------
  * Return codes

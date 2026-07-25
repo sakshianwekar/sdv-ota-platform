@@ -11,8 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define VERSION_JSON_PATH \
-    "../../../Virtual_ECU/MotorECU/config/version.json"
+#define VERSION_JSON_PATH "Virtual_ECU/MotorECU/config/version.json"
 
 static char s_version[VERSION_STR_MAX] = "unknown";
 static int  s_loaded = 0;

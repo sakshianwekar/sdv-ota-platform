@@ -139,6 +139,61 @@ static void kill_ecu(void)
 }
 
 /*
+ * apply_pending_version()
+ * If pending_version.txt exists, save current_version to previous_version.txt
+ * and update current_version before activation.
+ */
+static void apply_pending_version(VersionInfo *info)
+{
+    FILE *pf = fopen(PENDING_VERSION_FILE, "r");
+    if (!pf) return;
+
+    char new_version[VERSION_STR_MAX];
+    if (fscanf(pf, "%31s", new_version) != 1) {
+        fclose(pf);
+        remove(PENDING_VERSION_FILE);
+        return;
+    }
+    fclose(pf);
+    remove(PENDING_VERSION_FILE);
+
+    char old_version[VERSION_STR_MAX];
+    strncpy(old_version, info->current_version, sizeof(old_version) - 1);
+    old_version[sizeof(old_version) - 1] = '\0';
+
+    FILE *prev = fopen(PREVIOUS_VERSION_FILE, "w");
+    if (prev) {
+        fprintf(prev, "%s\n", old_version);
+        fclose(prev);
+    }
+
+    strncpy(info->current_version, new_version,
+            sizeof(info->current_version) - 1);
+    info->current_version[sizeof(info->current_version) - 1] = '\0';
+    printf("  version updated: %s → %s\n", old_version, new_version);
+}
+
+/*
+ * restore_previous_version()
+ * On rollback, restore current_version from previous_version.txt if present.
+ */
+static void restore_previous_version(VersionInfo *info)
+{
+    FILE *prev = fopen(PREVIOUS_VERSION_FILE, "r");
+    if (!prev) return;
+
+    char prev_version[VERSION_STR_MAX];
+    if (fscanf(prev, "%31s", prev_version) == 1) {
+        printf("  version restored: %s → %s\n",
+               info->current_version, prev_version);
+        strncpy(info->current_version, prev_version,
+                sizeof(info->current_version) - 1);
+    }
+    fclose(prev);
+    remove(PREVIOUS_VERSION_FILE);
+}
+
+/*
  * start_ecu()
  * Launches the ECU binary from the given slot in the background.
  * The ECU is responsible for writing its own PID to ECU_PIDFILE on startup.
@@ -229,10 +284,10 @@ int bl_activate(void)
            info.active_slot, info.current_version);
     printf("  activating     : slot%s\n", info.pending_slot);
 
-    /* Flip active_slot → pending_slot, clear pending */
-    char prev_active[SLOT_STR_MAX];
-    strncpy(prev_active, info.active_slot, sizeof(prev_active) - 1);
+    /* Apply pending version before flipping slots */
+    apply_pending_version(&info);
 
+    /* Flip active_slot → pending_slot, clear pending */
     strncpy(info.active_slot, info.pending_slot,
             sizeof(info.active_slot) - 1);
     info.pending_slot[0] = '\0';   /* null */
@@ -277,7 +332,8 @@ int bl_rollback(void)
     printf("  current (bad) slot : slot%s\n", info.active_slot);
     printf("  rolling back to    : slot%s\n", fallback);
 
-    /* Flip active_slot to the other slot, clear pending */
+    /* Restore version, flip active_slot to the other slot, clear pending */
+    restore_previous_version(&info);
     strncpy(info.active_slot, fallback, sizeof(info.active_slot) - 1);
     info.pending_slot[0] = '\0';
 

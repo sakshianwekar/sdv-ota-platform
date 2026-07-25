@@ -7,7 +7,9 @@ from verify_manifest import verify_signature, verify_checksum, load_public_key
 priv = load_private_key()
 pub = load_public_key()
 
-binary = "Firmware/motor_ecu/build/motor_ecu_v1.1"  # adjust to your real path
+binary = "Firmware/motor_ecu_v1.1/build/motor_ecu"  # adjust to your real path
+if os.name == "nt" and not os.path.isfile(binary):
+    binary = binary + ".exe"
 
 manifest = build_and_sign_manifest(binary, "1.1", "MotorECU", priv)
 
