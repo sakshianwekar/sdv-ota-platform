@@ -17,7 +17,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip3 install --no-cache-dir cryptography
+RUN pip3 install --no-cache-dir cryptography fastapi "uvicorn[standard]"
 
 RUN make -C Firmware/motor_ecu            && echo "motor_ecu v1.0: OK"
 RUN make -C Firmware/motor_ecu_v1.1       && echo "motor_ecu v1.1: OK"

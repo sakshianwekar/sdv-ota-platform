@@ -9,6 +9,17 @@ services:
       - .:/app
       - sdv_build_cache:/app/.build_cache
 
+  ota_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sdv_ota_server
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    command: ["uvicorn", "OTA_Cloud.server:app", "--host", "0.0.0.0", "--port", "8080"]
+
   dev:
     build:
       context: .

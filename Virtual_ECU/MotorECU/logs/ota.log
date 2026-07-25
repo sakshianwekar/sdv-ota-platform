@@ -1,0 +1,71 @@
+[2026-07-25 23:12:11] INFO  [ota] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
+[2026-07-25 23:12:11] INFO  [ota] Verifying Ed25519 signature
+[2026-07-25 23:12:12] INFO  [ota] Verifying SHA-256 checksum
+[2026-07-25 23:12:12] INFO  [ota] Verification passed for MotorECU v1.1
+[2026-07-25 23:12:12] INFO  [ota] Bootloader stage v1.1
+[2026-07-25 23:12:12] INFO  [ota] Bootloader activate v1.1
+[2026-07-25 23:12:14] INFO  [ota] Health monitor grace period (32s)
+[2026-07-25 23:12:14] INFO  Started in grace period mode (post-activation)
+[2026-07-25 23:12:14] INFO  Grace period started — watching ECU for stability
+[2026-07-25 23:12:14] INFO  ECU healthy during grace period (0s/32s)
+[2026-07-25 23:12:15] INFO  ECU healthy during grace period (1s/32s)
+[2026-07-25 23:12:16] INFO  ECU healthy during grace period (2s/32s)
+[2026-07-25 23:12:17] INFO  ECU healthy during grace period (3s/32s)
+[2026-07-25 23:12:18] INFO  ECU healthy during grace period (4s/32s)
+[2026-07-25 23:12:19] INFO  ECU healthy during grace period (5s/32s)
+[2026-07-25 23:12:20] INFO  ECU healthy during grace period (6s/32s)
+[2026-07-25 23:12:21] INFO  ECU healthy during grace period (7s/32s)
+[2026-07-25 23:12:22] INFO  ECU healthy during grace period (8s/32s)
+[2026-07-25 23:12:23] INFO  ECU healthy during grace period (9s/32s)
+[2026-07-25 23:12:24] INFO  ECU healthy during grace period (10s/32s)
+[2026-07-25 23:12:25] INFO  ECU healthy during grace period (11s/32s)
+[2026-07-25 23:12:26] INFO  ECU healthy during grace period (12s/32s)
+[2026-07-25 23:12:27] INFO  ECU healthy during grace period (13s/32s)
+[2026-07-25 23:12:28] INFO  ECU healthy during grace period (14s/32s)
+[2026-07-25 23:12:29] INFO  ECU healthy during grace period (15s/32s)
+[2026-07-25 23:12:30] INFO  ECU healthy during grace period (16s/32s)
+[2026-07-25 23:12:31] INFO  ECU healthy during grace period (17s/32s)
+[2026-07-25 23:12:32] INFO  ECU healthy during grace period (18s/32s)
+[2026-07-25 23:12:33] INFO  ECU healthy during grace period (19s/32s)
+[2026-07-25 23:12:34] INFO  ECU healthy during grace period (20s/32s)
+[2026-07-25 23:12:35] INFO  ECU healthy during grace period (21s/32s)
+[2026-07-25 23:12:36] INFO  ECU healthy during grace period (22s/32s)
+[2026-07-25 23:12:37] INFO  ECU healthy during grace period (23s/32s)
+[2026-07-25 23:12:38] INFO  ECU healthy during grace period (24s/32s)
+[2026-07-25 23:12:39] INFO  ECU healthy during grace period (25s/32s)
+[2026-07-25 23:12:40] INFO  ECU healthy during grace period (26s/32s)
+[2026-07-25 23:12:41] INFO  ECU healthy during grace period (27s/32s)
+[2026-07-25 23:12:42] INFO  ECU healthy during grace period (28s/32s)
+[2026-07-25 23:12:43] INFO  ECU healthy during grace period (29s/32s)
+[2026-07-25 23:12:44] INFO  ECU healthy during grace period (30s/32s)
+[2026-07-25 23:12:45] INFO  ECU healthy during grace period (31s/32s)
+[2026-07-25 23:12:46] INFO  Grace period expired — ECU stable, activation confirmed
+[2026-07-25 23:12:46] INFO  Grace period cleared
+[2026-07-25 23:12:46] INFO  Duration reached — exiting health monitor
+[2026-07-25 23:12:46] INFO  [ota] Install complete: MotorECU v1.1
+[2026-07-25 23:12:47] INFO  [ota] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.2.tar.gz
+[2026-07-25 23:12:47] INFO  [ota] Verifying Ed25519 signature
+[2026-07-25 23:12:47] INFO  [ota] Verifying SHA-256 checksum
+[2026-07-25 23:12:47] INFO  [ota] Verification passed for MotorECU v1.2
+[2026-07-25 23:12:47] INFO  [ota] Bootloader stage v1.2
+[2026-07-25 23:12:47] INFO  [ota] Bootloader activate v1.2
+[2026-07-25 23:12:49] INFO  [ota] Health monitor grace period (12s)
+[2026-07-25 23:12:49] INFO  Started in grace period mode (post-activation)
+[2026-07-25 23:12:49] INFO  Grace period started — watching ECU for stability
+[2026-07-25 23:12:49] INFO  ECU healthy during grace period (0s/12s)
+[2026-07-25 23:12:50] INFO  ECU healthy during grace period (1s/12s)
+[2026-07-25 23:12:51] INFO  ECU healthy during grace period (2s/12s)
+[2026-07-25 23:12:52] INFO  ECU healthy during grace period (3s/12s)
+[2026-07-25 23:12:53] INFO  ECU healthy during grace period (4s/12s)
+[2026-07-25 23:12:54] INFO  ECU healthy during grace period (5s/12s)
+[2026-07-25 23:12:55] INFO  ECU healthy during grace period (6s/12s)
+[2026-07-25 23:12:56] WARNING  ECU FAILED during grace period — consecutive failures: 1/3  (7s/12s)
+[2026-07-25 23:12:57] WARNING  ECU FAILED during grace period — consecutive failures: 2/3  (8s/12s)
+[2026-07-25 23:12:58] WARNING  ECU FAILED during grace period — consecutive failures: 3/3  (9s/12s)
+[2026-07-25 23:12:58] ERROR  FAILURE THRESHOLD REACHED — triggering automatic rollback
+[2026-07-25 23:12:58] INFO  Calling: bootloader rollback
+[2026-07-25 23:13:00] INFO  Rollback complete — ECU restored to previous slot
+[2026-07-25 23:13:00] INFO  Grace period cleared
+[2026-07-25 23:13:00] INFO  Rollback triggered — health monitor returning to normal mode
+[2026-07-25 23:13:01] INFO  Duration reached — exiting health monitor
+[2026-07-25 23:13:01] INFO  [ota] Install complete: MotorECU v1.2

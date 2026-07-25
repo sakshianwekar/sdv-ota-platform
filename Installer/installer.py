@@ -14,26 +14,17 @@ import shutil
 import subprocess
 import sys
 import tarfile
-from datetime import datetime
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS_DIR = os.path.join(REPO_ROOT, "Tools")
 sys.path.insert(0, TOOLS_DIR)
 
+from ota_log import ota_log  # noqa: E402
 from verify_manifest import load_public_key, verify_checksum, verify_signature  # noqa: E402
+from version_utils import is_downgrade, read_current_version  # noqa: E402
 
 VERSION_JSON = os.path.join(REPO_ROOT, "Virtual_ECU", "MotorECU", "config", "version.json")
 PENDING_VERSION_FILE = os.path.join(REPO_ROOT, "Virtual_ECU", "MotorECU", "config", "pending_version.txt")
-OTA_LOG_FILE = os.path.join(REPO_ROOT, "Virtual_ECU", "MotorECU", "logs", "ota.log")
-
-
-def ota_log(level, msg):
-    os.makedirs(os.path.dirname(OTA_LOG_FILE), exist_ok=True)
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    line = f"[{timestamp}] {level}  {msg}"
-    print(line)
-    with open(OTA_LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(line + "\n")
 
 
 def _bootloader_path(custom_path=None):
@@ -98,6 +89,16 @@ def install_package(package_path, bootloader_path=None, activate=False, grace_du
         raise ValueError("REJECTED: binary checksum mismatch — refusing to install")
 
     ota_log("INFO", f"Verification passed for {manifest['ecu']} v{manifest['version']}")
+
+    current_version = read_current_version()
+    if is_downgrade(current_version, manifest["version"]):
+        ota_log(
+            "ERROR",
+            f"REJECTED: downgrade blocked ({current_version} → {manifest['version']})",
+        )
+        raise ValueError(
+            f"REJECTED: downgrade not allowed ({current_version} → {manifest['version']})"
+        )
 
     _run_cmd([bl, "stage", binary_path], f"Bootloader stage v{manifest['version']}")
 

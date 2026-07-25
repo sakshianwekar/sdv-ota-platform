@@ -47,6 +47,12 @@ int check_ecu_health(void);
 void hm_start_grace_period(void);
 
 /*
+ * hm_start_grace_period_for()
+ * Same as hm_start_grace_period() but with a custom watch window in seconds.
+ */
+void hm_start_grace_period_for(int seconds);
+
+/*
  * hm_clear_grace_period()
  * Call this to manually exit grace period (e.g. after successful activation).
  */

@@ -49,9 +49,10 @@
 /* -------------------------------------------------------------------------
  * Internal state
  * ---------------------------------------------------------------------- */
-static int   g_in_grace_period    = 0;
-static time_t g_grace_start       = 0;
-static int   g_consecutive_fails  = 0;
+static int    g_in_grace_period    = 0;
+static time_t g_grace_start        = 0;
+static int    g_grace_seconds      = GRACE_PERIOD_SECONDS;
+static int    g_consecutive_fails  = 0;
 
 /* -------------------------------------------------------------------------
  * Logging helper — writes to both stdout and ota.log
@@ -86,12 +87,19 @@ int check_ecu_health(void)
         return 0;
     }
 
-    long heartbeat_time;
-    fscanf(fp, "%ld", &heartbeat_time);
+    long heartbeat_time = 0;
+    if (fscanf(fp, "%ld", &heartbeat_time) != 1) {
+        fclose(fp);
+        printf("Heartbeat file unreadable\n");
+        return 0;
+    }
     fclose(fp);
 
     long current_time = (long)time(NULL);
     long difference   = current_time - heartbeat_time;
+    if (difference < 0) {
+        difference = 0;
+    }
 
     printf("Heartbeat Age = %ld seconds\n", difference);
 
@@ -109,6 +117,15 @@ int check_ecu_health(void)
  * ---------------------------------------------------------------------- */
 void hm_start_grace_period(void)
 {
+    hm_start_grace_period_for(GRACE_PERIOD_SECONDS);
+}
+
+void hm_start_grace_period_for(int seconds)
+{
+    if (seconds <= 0) {
+        seconds = GRACE_PERIOD_SECONDS;
+    }
+    g_grace_seconds     = seconds;
     g_in_grace_period   = 1;
     g_grace_start       = time(NULL);
     g_consecutive_fails = 0;
@@ -141,7 +158,7 @@ int check_ecu_health_with_rollback(void)
     long elapsed = (long)(time(NULL) - g_grace_start);
 
     /* Grace period expired with no rollback — ECU is stable */
-    if (elapsed >= GRACE_PERIOD_SECONDS) {
+    if (elapsed >= g_grace_seconds) {
         ota_log("INFO",
             "Grace period expired — ECU stable, activation confirmed");
         hm_clear_grace_period();
@@ -155,7 +172,7 @@ int check_ecu_health_with_rollback(void)
         g_consecutive_fails = 0;
         snprintf(msg, sizeof(msg),
             "ECU healthy during grace period (%lds/%ds)",
-            elapsed, GRACE_PERIOD_SECONDS);
+            elapsed, g_grace_seconds);
         ota_log("INFO", msg);
         return 1;
     }
@@ -165,7 +182,7 @@ int check_ecu_health_with_rollback(void)
     snprintf(msg, sizeof(msg),
         "ECU FAILED during grace period — consecutive failures: %d/%d  (%lds/%ds)",
         g_consecutive_fails, FAILURE_THRESHOLD,
-        elapsed, GRACE_PERIOD_SECONDS);
+        elapsed, g_grace_seconds);
     ota_log("WARNING", msg);
 
     /* Threshold hit — trigger automatic rollback */
@@ -221,7 +238,11 @@ int main(int argc, char *argv[])
 
     if (grace_mode) {
         ota_log("INFO", "Started in grace period mode (post-activation)");
-        hm_start_grace_period();
+        if (duration > 0) {
+            hm_start_grace_period_for(duration);
+        } else {
+            hm_start_grace_period();
+        }
     }
 
     time_t start = time(NULL);
