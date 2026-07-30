@@ -76,6 +76,7 @@ FAST=1 ./Scripts/run_demo.sh
 | `./Scripts/run_demo.sh` | Full OTA happy path + rollback (local installer) |
 | `FAST=1 ./Scripts/run_demo.sh` | Skip rebuild — ~60s, suitable for recording |
 | `./Scripts/run_cloud_demo.sh` | Same demo via FastAPI server + OTA client |
+| `./Scripts/run_fleet_demo.sh` | Multi-ECU fleet update (MotorECU + BrakeECU + BatteryECU) |
 | `./Scripts/record_demo.sh` | Timed fast demo; `RECORD=1` saves `demo.cast` |
 
 **Expected final state after demo:**
@@ -112,6 +113,36 @@ python3 OTA_Client/client.py --server http://localhost:8080 --ecu MotorECU --ver
 ```
 
 Flow: poll server → compare versions → download → verify Ed25519 + SHA-256 → call Installer.
+
+---
+
+## Multi-ECU Fleet (Phases 16–17)
+
+Three virtual ECUs share the same A/B slot + signing + health-check architecture:
+
+| ECU | Role | Sensors |
+|-----|------|---------|
+| MotorECU | Drive motor | RPM, temperature |
+| BrakeECU | Brake-by-wire | Pressure, temperature |
+| BatteryECU | HV battery | SOC, voltage |
+
+```bash
+# Initialize all ECUs to v1.0
+./Scripts/init_ecu.sh all
+
+# Bootloader per ECU
+./Bootloader/build/bootloader --ecu BrakeECU status
+./Bootloader/build/bootloader --ecu BatteryECU stage Firmware/battery_ecu/build/battery_ecu
+
+# Fleet update — all ECUs via OTA server
+./Scripts/run_fleet_demo.sh
+
+# Or manually with fleet orchestrator
+python3 OTA_Client/fleet.py --server http://localhost:8080 \
+    --ecus MotorECU,BrakeECU,BatteryECU --version 1.1 --activate --grace-duration 15
+```
+
+Multi-vehicle simulation uses `Scripts/fleet_config.json` (VIN001 + VIN002, each with 3 ECUs).
 
 ---
 
@@ -174,17 +205,103 @@ Components: `[installer]`, `[client]`, `[cloud]`, health monitor (C), bootloader
 
 ```
 sdv-ota-platform/
-├── Bootloader/          # stage / activate / rollback (C)
+├── Bootloader/          # stage / activate / rollback (C, --ecu flag)
 ├── Common/version_store/# version.json read/write API
-├── Firmware/            # motor_ecu v1.0, v1.1, v1.2_broken
+├── Firmware/            # motor_ecu, brake_ecu, battery_ecu (+ v1.1, v1.2_broken)
 ├── Health_Monitor/      # heartbeat watch + auto rollback
 ├── OTA_Cloud/           # FastAPI server
-├── OTA_Client/          # polling download client
+├── OTA_Client/          # polling client + fleet orchestrator
 ├── Installer/           # verify + stage + activate
-├── Scripts/             # demo, packaging, ECU control
+├── Scripts/             # demo, fleet, packaging, ECU control
 ├── Tests/               # signing, tamper, downgrade tests
-├── Tools/               # keys, signing, shared logging
-└── Virtual_ECU/         # flash slots, runtime, config, logs
+├── Tools/               # keys, signing, ECU registry, logging
+└── Virtual_ECU/         # MotorECU, BrakeECU, BatteryECU flash slots
+```
+
+---
+
+## Project Phases
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 0–4 | Repo, Motor ECU v1.0, Virtual ECU, heartbeat, health monitor | Done |
+| 5 | version.json migration + version_store API | Done |
+| 6 | Bootloader CLI (stage / activate / rollback) | Done |
+| 7 | Firmware v1.1 Eco Mode | Done |
+| 8 | Ed25519 signing + manifest | Done |
+| 9 | OTA package generator | Done |
+| 10 | Installer (verify + stage + activate) | Done |
+| 11 | Health-checked activation + auto rollback | Done |
+| 12 | Broken firmware v1.2 + demo script | Done |
+| 13 | FastAPI OTA cloud server | Done |
+| 14 | OTA client (poll / download / verify) | Done |
+| 15 | Downgrade protection + tamper tests | Done |
+| 16 | Second + third virtual ECU (BrakeECU, BatteryECU) | Done |
+| 17 | Multi-ECU fleet simulation | Done |
+| 18 | Structured logging (`ota.log`) | Done |
+| 19 | README rewrite | Done |
+| 20 | 90-second demo recording script | Done |
+| 21 | Resume bullets | Done |
+
+**22 phases total — all complete.**
+
+---
+
+## How to Test
+
+### Prerequisites
+
+- **Docker** (recommended on Windows/Mac), or **WSL/Linux** with `gcc`, `make`, `python3`
+- First run: `python3 Tools/gen_keys.py` (auto-run by demo scripts if missing)
+
+### 1. Build (Docker)
+
+```bash
+docker compose up --build
+docker compose run dev bash
+```
+
+### 2. Unit / security tests
+
+```bash
+python3 Tests/test_signing.py
+python3 Tests/test_tamper.py
+python3 Tests/test_downgrade.py
+```
+
+Expected: all print `PASS` / `All ... tests passed.`
+
+### 3. Full OTA demo (happy path + rollback)
+
+```bash
+FAST=1 ./Scripts/run_demo.sh
+```
+
+Expected final state: `version: 1.1`, rollback from broken v1.2 logged in `Virtual_ECU/MotorECU/logs/ota.log`.
+
+### 4. Cloud path demo
+
+```bash
+./Scripts/run_cloud_demo.sh
+```
+
+Same outcome as step 3, but updates go through FastAPI + OTA client.
+
+### 5. Multi-ECU fleet demo
+
+```bash
+FAST=1 ./Scripts/run_fleet_demo.sh
+```
+
+Expected: MotorECU, BrakeECU, and BatteryECU all reach v1.1.
+
+### 6. Manual spot checks
+
+```bash
+./Bootloader/build/bootloader status
+./Bootloader/build/bootloader --ecu BrakeECU status
+curl http://localhost:8080/health          # with ota_server running
+curl http://localhost:8080/catalog
 ```
 
 ---

@@ -37,8 +37,8 @@ def _download(url, dest_path):
 
 
 def poll_for_update(server_url, ecu, target_version=None):
-    current = read_current_version()
-    ota_log("INFO", f"Current ECU version: {current}", component="client")
+    current = read_current_version(ecu=ecu)
+    ota_log("INFO", f"Current ECU version: {current}", component="client", ecu=ecu)
 
     updates_url = f"{server_url.rstrip('/')}/updates/{ecu}"
     try:
@@ -61,16 +61,17 @@ def poll_for_update(server_url, ecu, target_version=None):
     latest_version = update["version"]
 
     if compare_versions(latest_version, current) <= 0:
-        ota_log("INFO", f"No update available (current={current}, target={latest_version})", component="client")
+        ota_log("INFO", f"No update available (current={current}, target={latest_version})", component="client", ecu=ecu)
         return None
 
-    ota_log("INFO", f"Update available: {current} → {latest_version}", component="client")
+    ota_log("INFO", f"Update available: {current} -> {latest_version}", component="client", ecu=ecu)
     return update
 
 
 def download_and_install(server_url, update_info, activate=False, grace_duration=0):
+    ecu = update_info["ecu"]
     download_url = f"{server_url.rstrip('/')}{update_info['download_url']}"
-    ota_log("INFO", f"Downloading {download_url}", component="client")
+    ota_log("INFO", f"Downloading {download_url}", component="client", ecu=ecu)
 
     os.makedirs(os.path.join(REPO_ROOT, "packages"), exist_ok=True)
     local_name = update_info.get("package") or f"{update_info['ecu'].lower()}_v{update_info['version']}.tar.gz"
@@ -86,11 +87,12 @@ def download_and_install(server_url, update_info, activate=False, grace_duration
         if os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-    ota_log("INFO", f"Downloaded to {local_path}", component="client")
+    ota_log("INFO", f"Downloaded to {local_path}", component="client", ecu=ecu)
     return install_package(
         local_path,
         activate=activate,
         grace_duration=grace_duration if activate else 0,
+        ecu=ecu,
     )
 
 
@@ -122,7 +124,7 @@ def main():
             target_version=args.version,
         )
     except (RuntimeError, ValueError, FileNotFoundError) as exc:
-        ota_log("ERROR", str(exc), component="client")
+        ota_log("ERROR", str(exc), component="client", ecu=args.ecu)
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
 

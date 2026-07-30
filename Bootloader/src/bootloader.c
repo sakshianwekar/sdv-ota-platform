@@ -18,6 +18,79 @@
 #include <errno.h>
 
 /* -------------------------------------------------------------------------
+ * Per-ECU paths (configured via bl_configure, default MotorECU)
+ * ---------------------------------------------------------------------- */
+typedef struct {
+    char ecu_name[64];
+    char version_json[512];
+    char slot_a_dir[512];
+    char slot_b_dir[512];
+    char firmware_name[64];
+    char ecu_binary_a[512];
+    char ecu_binary_b[512];
+    char pidfile[512];
+    char pending_version[512];
+    char previous_version[512];
+} BlPaths;
+
+static BlPaths g_paths;
+static int g_paths_ready = 0;
+
+static const char *firmware_name_for_ecu(const char *ecu_name)
+{
+    if (strcmp(ecu_name, "BrakeECU") == 0) return "brake_ecu";
+    if (strcmp(ecu_name, "BatteryECU") == 0) return "battery_ecu";
+    return "motor_ecu";
+}
+
+void bl_configure(const char *ecu_name)
+{
+    const char *name = (ecu_name && ecu_name[0]) ? ecu_name : BL_DEFAULT_ECU;
+    const char *fw = firmware_name_for_ecu(name);
+
+    strncpy(g_paths.ecu_name, name, sizeof(g_paths.ecu_name) - 1);
+    g_paths.ecu_name[sizeof(g_paths.ecu_name) - 1] = '\0';
+
+    snprintf(g_paths.version_json, sizeof(g_paths.version_json),
+             "Virtual_ECU/%s/config/version.json", name);
+    snprintf(g_paths.slot_a_dir, sizeof(g_paths.slot_a_dir),
+             "Virtual_ECU/%s/flash/slotA", name);
+    snprintf(g_paths.slot_b_dir, sizeof(g_paths.slot_b_dir),
+             "Virtual_ECU/%s/flash/slotB", name);
+    strncpy(g_paths.firmware_name, fw, sizeof(g_paths.firmware_name) - 1);
+    g_paths.firmware_name[sizeof(g_paths.firmware_name) - 1] = '\0';
+    snprintf(g_paths.ecu_binary_a, sizeof(g_paths.ecu_binary_a),
+             "Virtual_ECU/%s/flash/slotA/%s", name, fw);
+    snprintf(g_paths.ecu_binary_b, sizeof(g_paths.ecu_binary_b),
+             "Virtual_ECU/%s/flash/slotB/%s", name, fw);
+    snprintf(g_paths.pidfile, sizeof(g_paths.pidfile),
+             "Virtual_ECU/%s/runtime/ecu.pid", name);
+    snprintf(g_paths.pending_version, sizeof(g_paths.pending_version),
+             "Virtual_ECU/%s/config/pending_version.txt", name);
+    snprintf(g_paths.previous_version, sizeof(g_paths.previous_version),
+             "Virtual_ECU/%s/config/previous_version.txt", name);
+
+    g_paths_ready = 1;
+}
+
+static void ensure_paths(void)
+{
+    if (!g_paths_ready) {
+        bl_configure(BL_DEFAULT_ECU);
+    }
+}
+
+#define VERSION_JSON_PATH   g_paths.version_json
+#define SLOT_A_DIR          g_paths.slot_a_dir
+#define SLOT_B_DIR          g_paths.slot_b_dir
+#define FIRMWARE_FILENAME   g_paths.firmware_name
+#define ECU_BINARY_RELPATH_A g_paths.ecu_binary_a
+#define ECU_BINARY_RELPATH_B g_paths.ecu_binary_b
+#define ECU_PIDFILE         g_paths.pidfile
+#define PENDING_VERSION_FILE g_paths.pending_version
+#define PREVIOUS_VERSION_FILE g_paths.previous_version
+
+/* -------------------------------------------------------------------------
  * Platform helpers
  * ---------------------------------------------------------------------- */
 #ifdef _WIN32
@@ -215,6 +288,8 @@ static int start_ecu(const char *slot)
 
 int bl_stage(const char *firmware_path)
 {
+    ensure_paths();
+
     if (!firmware_path || strlen(firmware_path) == 0) {
         fprintf(stderr, "[bootloader] stage: firmware_path is required\n");
         return BL_ERR_ARGS;
@@ -263,6 +338,8 @@ int bl_stage(const char *firmware_path)
 
 int bl_activate(void)
 {
+    ensure_paths();
+
     /* Read current state */
     VersionInfo info;
     int rc = vs_read(VERSION_JSON_PATH, &info);
@@ -317,6 +394,8 @@ int bl_activate(void)
 
 int bl_rollback(void)
 {
+    ensure_paths();
+
     /* Read current state */
     VersionInfo info;
     int rc = vs_read(VERSION_JSON_PATH, &info);
@@ -361,6 +440,8 @@ int bl_rollback(void)
 
 void bl_status(void)
 {
+    ensure_paths();
+
     VersionInfo info;
     int rc = vs_read(VERSION_JSON_PATH, &info);
     if (rc != VS_OK) {
@@ -369,7 +450,7 @@ void bl_status(void)
         return;
     }
 
-    printf("[bootloader] STATUS\n");
+    printf("[bootloader] STATUS (%s)\n", g_paths.ecu_name);
     printf("  version      : %s\n", info.current_version);
     printf("  active_slot  : %s\n", info.active_slot);
     printf("  pending_slot : %s\n",

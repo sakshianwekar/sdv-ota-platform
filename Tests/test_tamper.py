@@ -65,6 +65,6 @@ try:
     sys.exit(1)
 except ValueError as exc:
     assert "checksum" in str(exc).lower() or "signature" in str(exc).lower()
-    print(f"PASS: tampered package correctly rejected — {exc}")
+    print(f"PASS: tampered package correctly rejected - {exc}")
 
 print("All tamper rejection tests passed.")

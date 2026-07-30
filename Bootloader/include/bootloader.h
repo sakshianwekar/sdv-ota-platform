@@ -23,20 +23,8 @@ extern "C" {
 
 #include "version_store.h"
 
-/* -------------------------------------------------------------------------
- * Paths  (relative to repo root — where the bootloader binary is run from)
- * ---------------------------------------------------------------------- */
-#define VERSION_JSON_PATH  "Virtual_ECU/MotorECU/config/version.json"
-#define SLOT_A_DIR         "Virtual_ECU/MotorECU/flash/slotA"
-#define SLOT_B_DIR         "Virtual_ECU/MotorECU/flash/slotB"
-#define FIRMWARE_FILENAME  "motor_ecu"        /* copied into slot dir     */
-
-/* ECU process name — used to kill + restart the running ECU */
-#define ECU_BINARY_RELPATH_A  "Virtual_ECU/MotorECU/flash/slotA/motor_ecu"
-#define ECU_BINARY_RELPATH_B  "Virtual_ECU/MotorECU/flash/slotB/motor_ecu"
-#define ECU_PIDFILE           "Virtual_ECU/MotorECU/runtime/ecu.pid"
-#define PENDING_VERSION_FILE  "Virtual_ECU/MotorECU/config/pending_version.txt"
-#define PREVIOUS_VERSION_FILE "Virtual_ECU/MotorECU/config/previous_version.txt"
+/* Default ECU — overridden via bl_configure() / --ecu CLI flag (Phase 16) */
+#define BL_DEFAULT_ECU "MotorECU"
 
 /* -------------------------------------------------------------------------
  * Return codes
@@ -52,6 +40,14 @@ extern "C" {
 /* -------------------------------------------------------------------------
  * API
  * ---------------------------------------------------------------------- */
+
+/*
+ * bl_configure()
+ *
+ * Select which virtual ECU to operate on (MotorECU, BrakeECU, BatteryECU).
+ * Must be called before other API functions when not using MotorECU.
+ */
+void bl_configure(const char *ecu_name);
 
 /*
  * bl_stage()

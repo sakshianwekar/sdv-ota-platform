@@ -22,9 +22,7 @@ sys.path.insert(0, TOOLS_DIR)
 from ota_log import ota_log  # noqa: E402
 from verify_manifest import load_public_key, verify_checksum, verify_signature  # noqa: E402
 from version_utils import is_downgrade, read_current_version  # noqa: E402
-
-VERSION_JSON = os.path.join(REPO_ROOT, "Virtual_ECU", "MotorECU", "config", "version.json")
-PENDING_VERSION_FILE = os.path.join(REPO_ROOT, "Virtual_ECU", "MotorECU", "config", "pending_version.txt")
+from ecu_registry import ecu_paths, get_ecu_config  # noqa: E402
 
 
 def _bootloader_path(custom_path=None):
@@ -53,14 +51,14 @@ def _run_cmd(cmd, description):
     return result
 
 
-def install_package(package_path, bootloader_path=None, activate=False, grace_duration=0):
+def install_package(package_path, bootloader_path=None, activate=False, grace_duration=0, ecu=None):
     package_path = package_path if os.path.isabs(package_path) else os.path.join(REPO_ROOT, package_path)
     bl = _bootloader_path(bootloader_path)
 
     if not os.path.isfile(package_path):
         raise FileNotFoundError(f"Package not found: {package_path}")
 
-    ota_log("INFO", f"Installing package: {package_path}")
+    ota_log("INFO", f"Installing package: {package_path}", component="installer")
 
     extract_dir = os.path.join(REPO_ROOT, "Tools/output/_install_tmp")
     if os.path.exists(extract_dir):
@@ -76,49 +74,56 @@ def install_package(package_path, bootloader_path=None, activate=False, grace_du
     with open(manifest_path, encoding="utf-8") as f:
         manifest = json.load(f)
 
+    ecu_name = ecu or manifest.get("ecu", "MotorECU")
+    get_ecu_config(ecu_name)
+    paths = ecu_paths(ecu_name)
+    pending_version_file = paths["pending_version"]
+
     public_key = load_public_key(os.path.join(TOOLS_DIR, "keys/ota_public_key.pem"))
 
-    ota_log("INFO", "Verifying Ed25519 signature")
+    ota_log("INFO", "Verifying Ed25519 signature", component="installer", ecu=ecu_name)
     if not verify_signature(manifest, public_key):
-        ota_log("ERROR", "REJECTED: manifest signature invalid")
+        ota_log("ERROR", "REJECTED: manifest signature invalid", component="installer", ecu=ecu_name)
         raise ValueError("REJECTED: manifest signature invalid — refusing to install")
 
-    ota_log("INFO", "Verifying SHA-256 checksum")
+    ota_log("INFO", "Verifying SHA-256 checksum", component="installer", ecu=ecu_name)
     if not verify_checksum(binary_path, manifest):
-        ota_log("ERROR", "REJECTED: binary checksum mismatch")
+        ota_log("ERROR", "REJECTED: binary checksum mismatch", component="installer", ecu=ecu_name)
         raise ValueError("REJECTED: binary checksum mismatch — refusing to install")
 
-    ota_log("INFO", f"Verification passed for {manifest['ecu']} v{manifest['version']}")
+    ota_log("INFO", f"Verification passed for {manifest['ecu']} v{manifest['version']}", component="installer", ecu=ecu_name)
 
-    current_version = read_current_version()
+    current_version = read_current_version(ecu=ecu_name)
     if is_downgrade(current_version, manifest["version"]):
         ota_log(
             "ERROR",
-            f"REJECTED: downgrade blocked ({current_version} → {manifest['version']})",
+            f"REJECTED: downgrade blocked ({current_version} -> {manifest['version']})",
+            component="installer",
+            ecu=ecu_name,
         )
         raise ValueError(
-            f"REJECTED: downgrade not allowed ({current_version} → {manifest['version']})"
+            f"REJECTED: downgrade not allowed ({current_version} -> {manifest['version']})"
         )
 
-    _run_cmd([bl, "stage", binary_path], f"Bootloader stage v{manifest['version']}")
+    _run_cmd([bl, "--ecu", ecu_name, "stage", binary_path], f"Bootloader stage v{manifest['version']}")
 
     if activate:
-        os.makedirs(os.path.dirname(PENDING_VERSION_FILE), exist_ok=True)
-        with open(PENDING_VERSION_FILE, "w", encoding="utf-8") as f:
+        os.makedirs(os.path.dirname(pending_version_file), exist_ok=True)
+        with open(pending_version_file, "w", encoding="utf-8") as f:
             f.write(manifest["version"] + "\n")
 
-        _run_cmd([bl, "activate"], f"Bootloader activate v{manifest['version']}")
+        _run_cmd([bl, "--ecu", ecu_name, "activate"], f"Bootloader activate v{manifest['version']}")
 
         if grace_duration > 0:
             hm = _health_monitor_path()
             _run_cmd(
-                [hm, "--grace", "--duration", str(grace_duration)],
+                [hm, "--ecu", ecu_name, "--grace", "--duration", str(grace_duration)],
                 f"Health monitor grace period ({grace_duration}s)",
             )
         else:
-            ota_log("INFO", "Activation complete (no grace monitoring requested)")
+            ota_log("INFO", "Activation complete (no grace monitoring requested)", component="installer", ecu=ecu_name)
 
-    ota_log("INFO", f"Install complete: {manifest['ecu']} v{manifest['version']}")
+    ota_log("INFO", f"Install complete: {manifest['ecu']} v{manifest['version']}", component="installer", ecu=ecu_name)
     return manifest
 
 

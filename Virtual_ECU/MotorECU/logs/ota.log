@@ -69,3 +69,21 @@
 [2026-07-25 23:13:00] INFO  Rollback triggered — health monitor returning to normal mode
 [2026-07-25 23:13:01] INFO  Duration reached — exiting health monitor
 [2026-07-25 23:13:01] INFO  [ota] Install complete: MotorECU v1.2
+[2026-07-30 23:42:11] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
+[2026-07-30 23:42:11] INFO  [installer] Verifying Ed25519 signature
+[2026-07-30 23:42:11] INFO  [installer] Verifying SHA-256 checksum
+[2026-07-30 23:42:11] INFO  [installer] Verification passed for MotorECU v1.0
+[2026-07-30 23:42:42] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
+[2026-07-30 23:42:42] INFO  [installer] Verifying Ed25519 signature
+[2026-07-30 23:42:42] INFO  [installer] Verifying SHA-256 checksum
+[2026-07-30 23:42:42] INFO  [installer] Verification passed for MotorECU v1.0
+[2026-07-30 23:42:42] ERROR  [installer] REJECTED: downgrade blocked (1.1 → 1.0)
+[2026-07-30 23:42:43] INFO  [installer] Installing package: D:\sdv-ota-platform\Tools/output/tampered.tar.gz
+[2026-07-30 23:42:43] INFO  [installer] Verifying Ed25519 signature
+[2026-07-30 23:42:43] INFO  [installer] Verifying SHA-256 checksum
+[2026-07-30 23:42:43] ERROR  [installer] REJECTED: binary checksum mismatch
+[2026-07-30 23:43:05] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
+[2026-07-30 23:43:05] INFO  [installer] Verifying Ed25519 signature
+[2026-07-30 23:43:05] INFO  [installer] Verifying SHA-256 checksum
+[2026-07-30 23:43:05] INFO  [installer] Verification passed for MotorECU v1.0
+[2026-07-30 23:43:05] ERROR  [installer] REJECTED: downgrade blocked (1.1 -> 1.0)

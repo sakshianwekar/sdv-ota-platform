@@ -38,7 +38,7 @@ if os.path.isfile(package_v10):
         sys.exit(1)
     except ValueError as exc:
         assert "downgrade" in str(exc).lower()
-        print(f"PASS: downgrade correctly rejected — {exc}")
+        print(f"PASS: downgrade correctly rejected - {exc}")
     finally:
         with open(version_json, "w", encoding="utf-8") as f:
             json.dump(backup, f, indent=2)

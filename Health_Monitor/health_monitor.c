@@ -35,16 +35,30 @@
 #endif
 
 /* -------------------------------------------------------------------------
- * Paths
+ * Per-ECU paths (configured via --ecu flag, default MotorECU)
  * ---------------------------------------------------------------------- */
-#define HEARTBEAT_FILE \
-    "Virtual_ECU/MotorECU/runtime/heartbeat.txt"
+static char g_ecu_name[64] = "MotorECU";
+static char g_heartbeat_file[512] = "Virtual_ECU/MotorECU/runtime/heartbeat.txt";
+static char g_ota_log_file[512] = "Virtual_ECU/MotorECU/logs/ota.log";
+static char g_bootloader_cmd[512] = "./Bootloader/build/bootloader";
 
-#define BOOTLOADER_CMD \
-    "./Bootloader/build/bootloader"
+static void hm_configure(const char *ecu_name)
+{
+    const char *name = (ecu_name && ecu_name[0]) ? ecu_name : "MotorECU";
+    strncpy(g_ecu_name, name, sizeof(g_ecu_name) - 1);
+    g_ecu_name[sizeof(g_ecu_name) - 1] = '\0';
 
-#define OTA_LOG_FILE \
-    "Virtual_ECU/MotorECU/logs/ota.log"
+    snprintf(g_heartbeat_file, sizeof(g_heartbeat_file),
+             "Virtual_ECU/%s/runtime/heartbeat.txt", name);
+    snprintf(g_ota_log_file, sizeof(g_ota_log_file),
+             "Virtual_ECU/%s/logs/ota.log", name);
+    snprintf(g_bootloader_cmd, sizeof(g_bootloader_cmd),
+             "./Bootloader/build/bootloader --ecu %s", name);
+}
+
+#define HEARTBEAT_FILE g_heartbeat_file
+#define BOOTLOADER_CMD g_bootloader_cmd
+#define OTA_LOG_FILE   g_ota_log_file
 
 /* -------------------------------------------------------------------------
  * Internal state
@@ -217,16 +231,21 @@ int main(int argc, char *argv[])
 {
     int grace_mode = 0;
     int duration = 0;
+    const char *ecu_name = "MotorECU";
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--grace") == 0) {
             grace_mode = 1;
         } else if (strcmp(argv[i], "--duration") == 0 && i + 1 < argc) {
             duration = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "--ecu") == 0 && i + 1 < argc) {
+            ecu_name = argv[++i];
         }
     }
 
-    printf("[health_monitor] Starting\n");
+    hm_configure(ecu_name);
+
+    printf("[health_monitor] ECU              : %s\n", g_ecu_name);
     printf("[health_monitor] Heartbeat timeout : %ds\n", HEARTBEAT_TIMEOUT);
     printf("[health_monitor] Grace period      : %ds\n", GRACE_PERIOD_SECONDS);
     printf("[health_monitor] Failure threshold : %d consecutive failures\n",

@@ -1,0 +1,12 @@
+{
+  "vehicles": [
+    {
+      "id": "VIN001",
+      "ecus": ["MotorECU", "BrakeECU", "BatteryECU"]
+    },
+    {
+      "id": "VIN002",
+      "ecus": ["MotorECU", "BrakeECU", "BatteryECU"]
+    }
+  ]
+}
