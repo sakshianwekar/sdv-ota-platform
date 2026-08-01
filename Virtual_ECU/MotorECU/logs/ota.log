@@ -183,3 +183,13 @@
 [2026-08-01 23:07:58] INFO  [cloud] Update check for MotorECU — latest v1.2
 [2026-08-01 23:07:58] INFO  [client] No update available (current=1.1, target=1.1)
 [2026-08-01 23:10:10] INFO  [cloud] Update check for MotorECU — latest v1.2
+[2026-08-01 23:28:31] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
+[2026-08-01 23:28:31] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
+[2026-08-01 23:28:31] INFO  [fleet] [VIN001] Updating MotorECU
+[2026-08-01 23:28:31] INFO  [client] Current ECU version: 1.1
+[2026-08-01 23:28:32] ERROR  [fleet] [VIN001] MotorECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
+[2026-08-01 23:34:44] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
+[2026-08-01 23:34:44] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
+[2026-08-01 23:34:44] INFO  [fleet] [VIN001] Updating MotorECU
+[2026-08-01 23:34:44] INFO  [client] Current ECU version: 1.1
+[2026-08-01 23:34:44] ERROR  [fleet] [VIN001] MotorECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused

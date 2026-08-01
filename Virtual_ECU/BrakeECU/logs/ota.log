@@ -1,0 +1,6 @@
+[2026-08-01 23:28:32] INFO  [fleet] [VIN001] Updating BrakeECU
+[2026-08-01 23:28:32] INFO  [client] Current ECU version: 1.0
+[2026-08-01 23:28:32] ERROR  [fleet] [VIN001] BrakeECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
+[2026-08-01 23:34:44] INFO  [fleet] [VIN001] Updating BrakeECU
+[2026-08-01 23:34:44] INFO  [client] Current ECU version: 1.0
+[2026-08-01 23:34:44] ERROR  [fleet] [VIN001] BrakeECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
