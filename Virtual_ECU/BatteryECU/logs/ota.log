@@ -4,3 +4,63 @@
 [2026-08-01 23:34:44] INFO  [fleet] [VIN001] Updating BatteryECU
 [2026-08-01 23:34:44] INFO  [client] Current ECU version: 1.0
 [2026-08-01 23:34:44] ERROR  [fleet] [VIN001] BatteryECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
+[2026-08-03 22:36:45] INFO  [fleet] [VIN001] Updating BatteryECU
+[2026-08-03 22:36:45] INFO  [client] Current ECU version: 1.0
+[2026-08-03 22:36:45] INFO  [client] Update available: 1.0 -> 1.1
+[2026-08-03 22:36:45] INFO  [client] Downloading http://localhost:8080/packages/BatteryECU/1.1
+[2026-08-03 22:36:45] INFO  [client] Downloaded to /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/batteryecu_v1.1.tar.gz
+[2026-08-03 22:36:45] INFO  [installer] Verifying Ed25519 signature
+[2026-08-03 22:36:45] INFO  [installer] Verifying SHA-256 checksum
+[2026-08-03 22:36:45] INFO  [installer] Verification passed for BatteryECU v1.1
+[2026-08-03 22:36:47] INFO  Started in grace period mode (post-activation)
+[2026-08-03 22:36:47] INFO  Grace period started — watching ECU for stability
+[2026-08-03 22:36:47] INFO  ECU healthy during grace period (0s/15s)
+[2026-08-03 22:36:48] INFO  ECU healthy during grace period (1s/15s)
+[2026-08-03 22:36:49] INFO  ECU healthy during grace period (2s/15s)
+[2026-08-03 22:36:50] INFO  ECU healthy during grace period (3s/15s)
+[2026-08-03 22:36:51] INFO  ECU healthy during grace period (4s/15s)
+[2026-08-03 22:36:52] INFO  ECU healthy during grace period (5s/15s)
+[2026-08-03 22:36:53] INFO  ECU healthy during grace period (6s/15s)
+[2026-08-03 22:36:54] INFO  ECU healthy during grace period (7s/15s)
+[2026-08-03 22:36:55] INFO  ECU healthy during grace period (8s/15s)
+[2026-08-03 22:36:56] INFO  ECU healthy during grace period (9s/15s)
+[2026-08-03 22:36:57] INFO  ECU healthy during grace period (10s/15s)
+[2026-08-03 22:36:58] INFO  ECU healthy during grace period (11s/15s)
+[2026-08-03 22:36:59] INFO  ECU healthy during grace period (12s/15s)
+[2026-08-03 22:37:00] INFO  ECU healthy during grace period (13s/15s)
+[2026-08-03 22:37:01] INFO  ECU healthy during grace period (14s/15s)
+[2026-08-03 22:37:02] INFO  Grace period expired — ECU stable, activation confirmed
+[2026-08-03 22:37:02] INFO  Grace period cleared
+[2026-08-03 22:37:02] INFO  Duration reached — exiting health monitor
+[2026-08-03 22:37:02] INFO  [installer] Install complete: BatteryECU v1.1
+[2026-08-03 22:37:02] INFO  [fleet] [VIN001] BatteryECU: updated
+[2026-08-03 22:38:28] INFO  [fleet] [VIN001] Updating BatteryECU
+[2026-08-03 22:38:28] INFO  [client] Current ECU version: 1.0
+[2026-08-03 22:38:28] INFO  [client] Update available: 1.0 -> 1.1
+[2026-08-03 22:38:28] INFO  [client] Downloading http://localhost:8080/packages/BatteryECU/1.1
+[2026-08-03 22:38:28] INFO  [client] Downloaded to /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/batteryecu_v1.1.tar.gz
+[2026-08-03 22:38:28] INFO  [installer] Verifying Ed25519 signature
+[2026-08-03 22:38:28] INFO  [installer] Verifying SHA-256 checksum
+[2026-08-03 22:38:28] INFO  [installer] Verification passed for BatteryECU v1.1
+[2026-08-03 22:38:30] INFO  Started in grace period mode (post-activation)
+[2026-08-03 22:38:30] INFO  Grace period started — watching ECU for stability
+[2026-08-03 22:38:30] INFO  ECU healthy during grace period (0s/15s)
+[2026-08-03 22:38:31] INFO  ECU healthy during grace period (1s/15s)
+[2026-08-03 22:38:32] INFO  ECU healthy during grace period (2s/15s)
+[2026-08-03 22:38:33] INFO  ECU healthy during grace period (3s/15s)
+[2026-08-03 22:38:34] INFO  ECU healthy during grace period (4s/15s)
+[2026-08-03 22:38:35] INFO  ECU healthy during grace period (5s/15s)
+[2026-08-03 22:38:36] INFO  ECU healthy during grace period (6s/15s)
+[2026-08-03 22:38:37] INFO  ECU healthy during grace period (7s/15s)
+[2026-08-03 22:38:38] INFO  ECU healthy during grace period (8s/15s)
+[2026-08-03 22:38:39] INFO  ECU healthy during grace period (9s/15s)
+[2026-08-03 22:38:40] INFO  ECU healthy during grace period (10s/15s)
+[2026-08-03 22:38:41] INFO  ECU healthy during grace period (11s/15s)
+[2026-08-03 22:38:42] INFO  ECU healthy during grace period (12s/15s)
+[2026-08-03 22:38:43] INFO  ECU healthy during grace period (13s/15s)
+[2026-08-03 22:38:44] INFO  ECU healthy during grace period (14s/15s)
+[2026-08-03 22:38:45] INFO  Grace period expired — ECU stable, activation confirmed
+[2026-08-03 22:38:45] INFO  Grace period cleared
+[2026-08-03 22:38:45] INFO  Duration reached — exiting health monitor
+[2026-08-03 22:38:45] INFO  [installer] Install complete: BatteryECU v1.1
+[2026-08-03 22:38:45] INFO  [fleet] [VIN001] BatteryECU: updated

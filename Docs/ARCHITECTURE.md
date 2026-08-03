@@ -138,6 +138,8 @@ Signing details are documented in [signing.md](./signing.md).
 
 ### OTA_Cloud (`OTA_Cloud/server.py`)
 
+> See [Cloud Integration](#cloud-integration) for the full connection model, API details, and trust boundaries.
+
 - Scans `packages/` for `.tar.gz` files
 - Reads `manifest.json` inside each package to build a catalog
 - Exposes REST endpoints for health checks, update discovery, and downloads
@@ -150,6 +152,8 @@ Signing details are documented in [signing.md](./signing.md).
 | `GET /catalog` | Full package catalog for all ECUs |
 
 ### OTA_Client (`OTA_Client/client.py`, `fleet.py`)
+
+> See [Cloud Integration](#cloud-integration) for the poll/download sequence and fleet orchestration over HTTP.
 
 **client.py** — single-ECU update flow:
 
@@ -211,6 +215,434 @@ Simulated ECU processes that write sensor values and heartbeats:
 | v1.0 | battery_ecu | SOC + voltage sensors |
 
 v1.2 is **legitimately signed** — the security layer accepts it. The health monitor catches the behavioral failure. These are two independent safety nets.
+
+---
+
+## Cloud Integration
+
+This section explains how the OTA cloud server connects to the rest of the system, what communication actually happens over the network, and where the trust boundaries lie.
+
+### What "Cloud" Means in This Project
+
+The **OTA_Cloud** component is a **local simulated cloud backend** — not AWS, Azure, or a remote OEM server. It is a FastAPI application (`OTA_Cloud/server.py`) that runs on your machine (typically `localhost:8080`) and serves pre-built signed firmware packages from the `packages/` directory.
+
+In a real vehicle OTA system, this role would be played by an OEM backend (e.g. Tesla, Rivian, or a tier-1 supplier cloud). This project models that pattern using plain HTTP on the same host, so the full pipeline can be demonstrated without external infrastructure.
+
+**Important:** The cloud is only a **package delivery layer**. It does not install firmware, verify signatures, talk to the bootloader, or know what version is running on any ECU.
+
+### Connection Model
+
+There is exactly **one network connection** in this project: **OTA_Client → OTA_Cloud** over HTTP.
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         "Vehicle" (local machine)                        │
+│                                                                          │
+│  ┌─────────────┐    HTTP REST     ┌─────────────┐                        │
+│  │ OTA_Client  │ ◄──────────────► │ OTA_Cloud   │  (may be same host     │
+│  │             │  poll + download │ (FastAPI)   │   or separate container)│
+│  └──────┬──────┘                  └──────┬──────┘                        │
+│         │                                │                               │
+│         │ subprocess                     │ reads files                    │
+│         ▼                                ▼                               │
+│  ┌─────────────┐                  packages/*.tar.gz                       │
+│  │ Installer   │                                                          │
+│  └──────┬──────┘                                                          │
+│         │ subprocess                                                      │
+│         ▼                                                                 │
+│  ┌─────────────┐    subprocess    ┌─────────────┐    heartbeat file       │
+│  │ Bootloader  │ ───────────────► │ Virtual ECU │ ◄──────────────────┐   │
+│  └─────────────┘                  └─────────────┘                     │   │
+│         ▲                                                             │   │
+│         │ rollback                                                    │   │
+│  ┌──────┴──────┐                                                      │   │
+│  │Health_Monitor│─────────────────────────────────────────────────────┘   │
+│  └─────────────┘                                                          │
+│                                                                          │
+│  ◄── No network connection to cloud from here                           │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+Components below the client (Installer, Bootloader, Virtual ECU, Health Monitor) run **entirely on the vehicle side** with no cloud involvement. If the server goes down after a package is downloaded, the install pipeline still works.
+
+### Trust Boundary
+
+Security follows the **production OTA principle: trust is always verified on the vehicle, never on the cloud.**
+
+| Responsibility | Cloud server | OTA client / installer (vehicle) |
+|----------------|--------------|----------------------------------|
+| Host signed packages | Yes | No |
+| Know ECU current version | No | Yes (reads `version.json`) |
+| Verify Ed25519 signature | No | Yes |
+| Verify SHA-256 checksum | No | Yes |
+| Block downgrades | No | Yes |
+| Write to flash slots | No | No (bootloader only) |
+| Health monitoring / rollback | No | Yes (health monitor) |
+
+The cloud can serve any signed package that exists in `packages/`. The vehicle decides whether to accept, stage, and activate it. A malicious or compromised server cannot bypass signature verification — the vehicle holds the public key (`Tools/keys/ota_public_key.pem`).
+
+### What the Cloud Server Does
+
+**File:** `OTA_Cloud/server.py`  
+**Runtime:** `uvicorn OTA_Cloud.server:app --host 0.0.0.0 --port 8080`
+
+On startup and on every request, the server **scans** the `packages/` directory:
+
+1. List all `*.tar.gz` files
+2. Open each tarball and read `manifest.json` (without extracting to disk)
+3. Build an in-memory catalog keyed by ECU name and version
+4. Serve catalog metadata and file downloads via REST
+
+The server is **stateless** — no database, no session store, no ECU registry. If you add a new `.tar.gz` to `packages/`, the next request picks it up automatically.
+
+Logging uses the shared `ota_log` helper with the `[cloud]` component tag, e.g.:
+
+```
+[INFO] [cloud] Update check for MotorECU — latest v1.2
+[INFO] [cloud] Serving motorecu_v1.1.tar.gz
+```
+
+### What the Cloud Server Does NOT Do
+
+- **Push updates** — there is no WebSocket, MQTT, or server-initiated connection; the client must poll
+- **Track vehicle state** — the server never reads `version.json` or knows what is installed
+- **Authenticate vehicles** — no API keys, TLS client certs, or VIN validation (could be added in a production system)
+- **Sign packages** — signing happens offline via `Scripts/package_generator.py` before upload to `packages/`
+- **Install or activate firmware** — download only
+- **Communicate with bootloader or ECU** — no direct connection exists
+
+### REST API Reference
+
+Base URL: `http://localhost:8080` (configurable via `SERVER_URL`)
+
+#### `GET /health`
+
+Health check for monitoring and demo script readiness probes.
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "packages_dir": "/app/packages"
+}
+```
+
+#### `GET /updates/{ecu}`
+
+Returns the latest package and full list of available versions for an ECU. Used by the client to discover updates.
+
+**Example:** `GET /updates/MotorECU`
+
+**Response:**
+```json
+{
+  "ecu": "MotorECU",
+  "latest": {
+    "ecu": "MotorECU",
+    "version": "1.2",
+    "size": 12345,
+    "checksum": "sha256:abc123...",
+    "package": "motorecu_v1.2.tar.gz",
+    "download_url": "/packages/MotorECU/1.2"
+  },
+  "available": [
+    { "ecu": "MotorECU", "version": "1.0", "download_url": "/packages/MotorECU/1.0", ... },
+    { "ecu": "MotorECU", "version": "1.1", "download_url": "/packages/MotorECU/1.1", ... },
+    { "ecu": "MotorECU", "version": "1.2", "download_url": "/packages/MotorECU/1.2", ... }
+  ]
+}
+```
+
+Returns `404` if no packages exist for the requested ECU.
+
+#### `GET /packages/{ecu}/{version}`
+
+Downloads the signed `.tar.gz` package as a file attachment.
+
+**Example:** `GET /packages/MotorECU/1.1`  
+**Response:** Binary stream (`application/gzip`) of `motorecu_v1.1.tar.gz`
+
+Returns `404` if the ECU/version combination is not in the catalog or the file is missing from disk.
+
+#### `GET /catalog`
+
+Returns the full package catalog for all ECUs (useful for debugging and demos).
+
+**Example response:**
+```json
+{
+  "MotorECU": {
+    "1.0": { "ecu": "MotorECU", "version": "1.0", "download_url": "/packages/MotorECU/1.0", ... },
+    "1.1": { ... },
+    "1.2": { ... }
+  },
+  "BrakeECU": {
+    "1.1": { ... }
+  }
+}
+```
+
+### OTA Client — Cloud Interaction Flow
+
+**File:** `OTA_Client/client.py`  
+**Transport:** Python `urllib` (standard library HTTP, no extra client SDK)
+
+The client is the **only component** that talks to the cloud. Here is the full sequence:
+
+```
+┌──────────┐                    ┌──────────┐                    ┌──────────┐
+│  Client  │                    │  Cloud   │                    │ Installer│
+└────┬─────┘                    └────┬─────┘                    └────┬─────┘
+     │                                 │                               │
+     │ 1. Read local version.json      │                               │
+     │    (current = 1.0)              │                               │
+     │                                 │                               │
+     │ 2. GET /updates/MotorECU        │                               │
+     │────────────────────────────────►│                               │
+     │◄────────────────────────────────│                               │
+     │    { latest: 1.1, available }   │                               │
+     │                                 │                               │
+     │ 3. Compare: 1.1 > 1.0 → update  │                               │
+     │    available                    │                               │
+     │                                 │                               │
+     │ 4. GET /packages/MotorECU/1.1   │                               │
+     │────────────────────────────────►│                               │
+     │◄────────────────────────────────│                               │
+     │    motorecu_v1.1.tar.gz         │                               │
+     │                                 │                               │
+     │ 5. Save to packages/            │                               │
+     │                                 │                               │
+     │ 6. install_package(local_path)  │                               │
+     │─────────────────────────────────────────────────────────────────►│
+     │                                 │                               │
+     │                                 │         7. verify + stage +   │
+     │                                 │            activate + grace   │
+     │◄─────────────────────────────────────────────────────────────────│
+     │    done                         │                               │
+```
+
+#### Step-by-step (mapped to code)
+
+| Step | Action | Code location |
+|------|--------|---------------|
+| 1 | Read current ECU version from `Virtual_ECU/{ECU}/config/version.json` | `poll_for_update()` → `read_current_version()` |
+| 2 | HTTP GET `{server}/updates/{ecu}` | `poll_for_update()` → `_get_json(updates_url)` |
+| 3 | Pick target version (`--version` flag or `latest`); skip if not newer | `poll_for_update()` → `compare_versions()` |
+| 4 | HTTP GET `{server}{download_url}` | `download_and_install()` → `_download()` |
+| 5 | Save tarball to `packages/{name}.tar.gz` | `download_and_install()` |
+| 6 | Hand off to installer (cloud no longer involved) | `download_and_install()` → `install_package()` |
+
+Key client functions:
+
+```python
+# Poll server for available updates
+updates_url = f"{server_url}/updates/{ecu}"
+data = _get_json(updates_url)
+
+# Download package
+download_url = f"{server_url}{update_info['download_url']}"
+_download(download_url, tmp_path)
+
+# Install locally — same path as non-cloud demo
+install_package(local_path, activate=..., grace_duration=..., ecu=...)
+```
+
+If the server is unreachable, the client raises:
+
+```
+Cannot reach OTA server at http://localhost:8080: <reason>
+```
+
+The bootloader and ECU are unaffected — they were never part of the HTTP conversation.
+
+### Local Path vs Cloud Path
+
+Both paths produce **identical results** after the package is available on disk. The only difference is how the `.tar.gz` gets to the vehicle.
+
+| Aspect | Local path | Cloud path |
+|--------|------------|------------|
+| Entry point | `Installer/installer.py` directly | `OTA_Client/client.py` |
+| Package source | Already in `packages/` (built by demo script) | Downloaded via HTTP from OTA_Cloud |
+| Server required | No | Yes (`uvicorn` on port 8080) |
+| Network traffic | None | 2 HTTP requests per update (poll + download) |
+| Verify / stage / activate | Installer | Installer (after download) |
+| Demo script | `run_demo.sh` (default) | `run_cloud_demo.sh` or `CLOUD=1 run_demo.sh` |
+
+In `Scripts/run_demo.sh`, the switch is a single environment variable:
+
+```bash
+# Local path (default)
+python3 Installer/installer.py packages/motorecu_v1.1.tar.gz --activate --grace-duration 32
+
+# Cloud path (CLOUD=1)
+python3 OTA_Client/client.py \
+    --server http://localhost:8080 --ecu MotorECU --version 1.1 \
+    --activate --grace-duration 32
+```
+
+### How Demo Scripts Wire Up the Cloud
+
+#### `run_cloud_demo.sh`
+
+Sets `CLOUD=1` and delegates to `run_demo.sh`:
+
+```bash
+CLOUD=1 FAST=1 bash Scripts/run_demo.sh
+```
+
+When `CLOUD=1`, `run_demo.sh` additionally:
+
+1. Builds packages locally (the server does not create them — they must exist in `packages/` before the client polls)
+2. Starts the server in the background:
+   ```bash
+   uvicorn OTA_Cloud.server:app --host 127.0.0.1 --port 8080 &
+   ```
+3. Waits for `GET /health` to succeed (up to 10 retries)
+4. Runs installs via `OTA_Client/client.py` instead of `Installer/installer.py` directly
+5. Stops the server on exit via `trap stop_ota_server EXIT`
+
+#### `run_fleet_demo.sh`
+
+Always uses the cloud path:
+
+1. `init_ecu.sh all` — reset all ECUs to v1.0
+2. Package v1.1 firmware for MotorECU, BrakeECU, BatteryECU into `packages/`
+3. Start OTA cloud server on port 8080
+4. Run `OTA_Client/fleet.py` to update each ECU sequentially
+
+### Fleet Orchestration Over the Cloud
+
+**File:** `OTA_Client/fleet.py`
+
+The fleet orchestrator calls `run_client()` once per ECU, reusing the same cloud connection pattern. Each ECU update is an independent poll + download + install cycle.
+
+```
+fleet.py
+  │
+  ├─ For vehicle VIN001:
+  │     ├─ run_client(server, MotorECU)   → GET /updates/MotorECU → GET /packages/... → install
+  │     ├─ run_client(server, BrakeECU)   → same pattern
+  │     └─ run_client(server, BatteryECU) → same pattern
+  │
+  └─ For vehicle VIN002:
+        └─ (same ECUs — simulated multi-vehicle config)
+```
+
+Fleet configuration (`Scripts/fleet_config.json`):
+
+```json
+{
+  "vehicles": [
+    { "id": "VIN001", "ecus": ["MotorECU", "BrakeECU", "BatteryECU"] },
+    { "id": "VIN002", "ecus": ["MotorECU", "BrakeECU", "BatteryECU"] }
+  ]
+}
+```
+
+In this simulation, all vehicles share the same local `Virtual_ECU/` directories — the VIN is used for logging and orchestration structure, not physical isolation.
+
+### Docker Deployment
+
+`docker-compose.yml` defines three services that share the same repo mount:
+
+| Service | Container | Role |
+|---------|-----------|------|
+| `ota_server` | `sdv_ota_server` | Runs uvicorn, exposes **port 8080** to host |
+| `dev` | `sdv_dev` | Interactive shell for running demos and client |
+| `sdv_ota` | `sdv_ota` | Build image, show status on start |
+
+Because both `ota_server` and `dev` mount `.` → `/app`, they see the **same `packages/` directory**. In a real deployment:
+
+- **Cloud container** would only have access to `packages/` (or S3-backed storage)
+- **Vehicle container** would only have the client, installer, bootloader, and ECU — no private signing key
+
+Example: run server in one terminal, client in another:
+
+```bash
+# Terminal 1
+docker compose up ota_server
+
+# Terminal 2
+docker compose run dev bash
+python3 OTA_Client/client.py --server http://host.docker.internal:8080 --ecu MotorECU --version 1.1 --activate
+```
+
+When both run inside the same `dev` container, `http://localhost:8080` works because the demo scripts start uvicorn locally.
+
+### Package Lifecycle (Cloud Perspective)
+
+Understanding where packages come from clarifies the cloud's role:
+
+```
+Firmware binary (C)
+        │
+        ▼
+Scripts/package_generator.py
+  ├─ Compute SHA-256 checksum
+  ├─ Sign manifest with Ed25519 private key
+  └─ Create packages/motorecu_v1.1.tar.gz
+        │
+        ▼
+packages/ directory on disk
+        │
+        ▼
+OTA_Cloud scans directory → builds catalog → serves via HTTP
+        │
+        ▼
+OTA_Client downloads → saves to packages/ (same or vehicle-side copy)
+        │
+        ▼
+Installer verifies signature + checksum → stages → activates
+```
+
+The cloud never participates in signing or verification — it only distributes already-signed artifacts.
+
+### Environment Variables
+
+| Variable | Default | Used by | Effect |
+|----------|---------|---------|--------|
+| `CLOUD` | `0` | `run_demo.sh` | `1` = use OTA client + start server |
+| `SERVER_URL` | `http://localhost:8080` | Client, demo scripts | Cloud server base URL |
+| `FAST` | `0` | Demo scripts | Skip C rebuilds |
+| `GRACE_V11` | `32` | Demo scripts | Grace period for v1.1 (seconds) |
+| `GRACE_V12` | `12` | Demo scripts | Grace period for v1.2 (seconds) |
+
+Client CLI flags:
+
+```bash
+python3 OTA_Client/client.py \
+  --server http://localhost:8080 \   # cloud URL
+  --ecu MotorECU \                   # target ECU
+  --version 1.1 \                    # specific version (optional)
+  --activate \                       # activate after stage
+  --grace-duration 32                # health monitor window
+```
+
+### Failure Modes
+
+| Scenario | What happens | Cloud involved? |
+|----------|--------------|-----------------|
+| Server not running | Client fails: `Cannot reach OTA server` | Yes — connection failed |
+| Package not in `packages/` | Server returns 404 on `/updates/{ecu}` | Yes |
+| Tampered download | Installer rejects: invalid signature or checksum | No — verified locally |
+| Downgrade attempt | Installer rejects before staging | No |
+| Broken firmware (v1.2) | Health monitor rolls back after activation | No |
+| Server stops mid-download | Client HTTP error; install does not proceed | Yes |
+| Server stops after download | Install continues normally | No — already local |
+
+### Production Analogy
+
+| This project | Real automotive OTA |
+|--------------|----------------------|
+| FastAPI on `localhost:8080` | OEM cloud backend (REST/gRPC API) |
+| `packages/` folder on disk | S3, Azure Blob, or CDN |
+| `OTA_Client` polling HTTP | In-vehicle OTA agent / telematics module |
+| Ed25519 verify on vehicle | Same — always on-device before flash |
+| `version.json` on filesystem | ECU NVM / secure storage |
+| A/B slots + health monitor | Same pattern on real ECU hardware |
+| No TLS / auth | Production would use HTTPS, mutual TLS, VIN auth |
+
+The architecture intentionally mirrors production: **the cloud delivers packages; the vehicle verifies and installs locally.** The cloud never has direct access to flash slots or ECU runtime state.
 
 ---
 

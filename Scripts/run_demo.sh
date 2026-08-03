@@ -83,6 +83,7 @@ reset_to_v1_0() {
 
     cp "$V1_0" "$SLOT_A/motor_ecu"
     cp "$V1_0" "$SLOT_B/motor_ecu"
+    chmod +x "$SLOT_A/motor_ecu" "$SLOT_B/motor_ecu"
 
     cat > "$VERSION_JSON" <<'EOF'
 {

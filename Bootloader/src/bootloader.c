@@ -17,6 +17,10 @@
 #include <string.h>
 #include <errno.h>
 
+#ifndef _WIN32
+#include <sys/stat.h>
+#endif
+
 /* -------------------------------------------------------------------------
  * Per-ECU paths (configured via bl_configure, default MotorECU)
  * ---------------------------------------------------------------------- */
@@ -144,7 +148,18 @@ static int copy_file(const char *src, const char *dst)
 
     fclose(in);
     fclose(out);
-    return ok ? 0 : -1;
+    if (!ok) {
+        return -1;
+    }
+
+#ifndef _WIN32
+    if (chmod(dst, 0755) != 0) {
+        fprintf(stderr, "[bootloader] WARNING: chmod failed for %s: %s\n",
+                dst, strerror(errno));
+    }
+#endif
+
+    return 0;
 }
 
 /*

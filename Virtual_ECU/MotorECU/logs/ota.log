@@ -1,195 +1,152 @@
-[2026-07-25 23:12:11] INFO  [ota] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
-[2026-07-25 23:12:11] INFO  [ota] Verifying Ed25519 signature
-[2026-07-25 23:12:12] INFO  [ota] Verifying SHA-256 checksum
-[2026-07-25 23:12:12] INFO  [ota] Verification passed for MotorECU v1.1
-[2026-07-25 23:12:12] INFO  [ota] Bootloader stage v1.1
-[2026-07-25 23:12:12] INFO  [ota] Bootloader activate v1.1
-[2026-07-25 23:12:14] INFO  [ota] Health monitor grace period (32s)
-[2026-07-25 23:12:14] INFO  Started in grace period mode (post-activation)
-[2026-07-25 23:12:14] INFO  Grace period started — watching ECU for stability
-[2026-07-25 23:12:14] INFO  ECU healthy during grace period (0s/32s)
-[2026-07-25 23:12:15] INFO  ECU healthy during grace period (1s/32s)
-[2026-07-25 23:12:16] INFO  ECU healthy during grace period (2s/32s)
-[2026-07-25 23:12:17] INFO  ECU healthy during grace period (3s/32s)
-[2026-07-25 23:12:18] INFO  ECU healthy during grace period (4s/32s)
-[2026-07-25 23:12:19] INFO  ECU healthy during grace period (5s/32s)
-[2026-07-25 23:12:20] INFO  ECU healthy during grace period (6s/32s)
-[2026-07-25 23:12:21] INFO  ECU healthy during grace period (7s/32s)
-[2026-07-25 23:12:22] INFO  ECU healthy during grace period (8s/32s)
-[2026-07-25 23:12:23] INFO  ECU healthy during grace period (9s/32s)
-[2026-07-25 23:12:24] INFO  ECU healthy during grace period (10s/32s)
-[2026-07-25 23:12:25] INFO  ECU healthy during grace period (11s/32s)
-[2026-07-25 23:12:26] INFO  ECU healthy during grace period (12s/32s)
-[2026-07-25 23:12:27] INFO  ECU healthy during grace period (13s/32s)
-[2026-07-25 23:12:28] INFO  ECU healthy during grace period (14s/32s)
-[2026-07-25 23:12:29] INFO  ECU healthy during grace period (15s/32s)
-[2026-07-25 23:12:30] INFO  ECU healthy during grace period (16s/32s)
-[2026-07-25 23:12:31] INFO  ECU healthy during grace period (17s/32s)
-[2026-07-25 23:12:32] INFO  ECU healthy during grace period (18s/32s)
-[2026-07-25 23:12:33] INFO  ECU healthy during grace period (19s/32s)
-[2026-07-25 23:12:34] INFO  ECU healthy during grace period (20s/32s)
-[2026-07-25 23:12:35] INFO  ECU healthy during grace period (21s/32s)
-[2026-07-25 23:12:36] INFO  ECU healthy during grace period (22s/32s)
-[2026-07-25 23:12:37] INFO  ECU healthy during grace period (23s/32s)
-[2026-07-25 23:12:38] INFO  ECU healthy during grace period (24s/32s)
-[2026-07-25 23:12:39] INFO  ECU healthy during grace period (25s/32s)
-[2026-07-25 23:12:40] INFO  ECU healthy during grace period (26s/32s)
-[2026-07-25 23:12:41] INFO  ECU healthy during grace period (27s/32s)
-[2026-07-25 23:12:42] INFO  ECU healthy during grace period (28s/32s)
-[2026-07-25 23:12:43] INFO  ECU healthy during grace period (29s/32s)
-[2026-07-25 23:12:44] INFO  ECU healthy during grace period (30s/32s)
-[2026-07-25 23:12:45] INFO  ECU healthy during grace period (31s/32s)
-[2026-07-25 23:12:46] INFO  Grace period expired — ECU stable, activation confirmed
-[2026-07-25 23:12:46] INFO  Grace period cleared
-[2026-07-25 23:12:46] INFO  Duration reached — exiting health monitor
-[2026-07-25 23:12:46] INFO  [ota] Install complete: MotorECU v1.1
-[2026-07-25 23:12:47] INFO  [ota] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.2.tar.gz
-[2026-07-25 23:12:47] INFO  [ota] Verifying Ed25519 signature
-[2026-07-25 23:12:47] INFO  [ota] Verifying SHA-256 checksum
-[2026-07-25 23:12:47] INFO  [ota] Verification passed for MotorECU v1.2
-[2026-07-25 23:12:47] INFO  [ota] Bootloader stage v1.2
-[2026-07-25 23:12:47] INFO  [ota] Bootloader activate v1.2
-[2026-07-25 23:12:49] INFO  [ota] Health monitor grace period (12s)
-[2026-07-25 23:12:49] INFO  Started in grace period mode (post-activation)
-[2026-07-25 23:12:49] INFO  Grace period started — watching ECU for stability
-[2026-07-25 23:12:49] INFO  ECU healthy during grace period (0s/12s)
-[2026-07-25 23:12:50] INFO  ECU healthy during grace period (1s/12s)
-[2026-07-25 23:12:51] INFO  ECU healthy during grace period (2s/12s)
-[2026-07-25 23:12:52] INFO  ECU healthy during grace period (3s/12s)
-[2026-07-25 23:12:53] INFO  ECU healthy during grace period (4s/12s)
-[2026-07-25 23:12:54] INFO  ECU healthy during grace period (5s/12s)
-[2026-07-25 23:12:55] INFO  ECU healthy during grace period (6s/12s)
-[2026-07-25 23:12:56] WARNING  ECU FAILED during grace period — consecutive failures: 1/3  (7s/12s)
-[2026-07-25 23:12:57] WARNING  ECU FAILED during grace period — consecutive failures: 2/3  (8s/12s)
-[2026-07-25 23:12:58] WARNING  ECU FAILED during grace period — consecutive failures: 3/3  (9s/12s)
-[2026-07-25 23:12:58] ERROR  FAILURE THRESHOLD REACHED — triggering automatic rollback
-[2026-07-25 23:12:58] INFO  Calling: bootloader rollback
-[2026-07-25 23:13:00] INFO  Rollback complete — ECU restored to previous slot
-[2026-07-25 23:13:00] INFO  Grace period cleared
-[2026-07-25 23:13:00] INFO  Rollback triggered — health monitor returning to normal mode
-[2026-07-25 23:13:01] INFO  Duration reached — exiting health monitor
-[2026-07-25 23:13:01] INFO  [ota] Install complete: MotorECU v1.2
-[2026-07-30 23:42:11] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
-[2026-07-30 23:42:11] INFO  [installer] Verifying Ed25519 signature
-[2026-07-30 23:42:11] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-30 23:42:11] INFO  [installer] Verification passed for MotorECU v1.0
-[2026-07-30 23:42:42] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
-[2026-07-30 23:42:42] INFO  [installer] Verifying Ed25519 signature
-[2026-07-30 23:42:42] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-30 23:42:42] INFO  [installer] Verification passed for MotorECU v1.0
-[2026-07-30 23:42:42] ERROR  [installer] REJECTED: downgrade blocked (1.1 → 1.0)
-[2026-07-30 23:42:43] INFO  [installer] Installing package: D:\sdv-ota-platform\Tools/output/tampered.tar.gz
-[2026-07-30 23:42:43] INFO  [installer] Verifying Ed25519 signature
-[2026-07-30 23:42:43] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-30 23:42:43] ERROR  [installer] REJECTED: binary checksum mismatch
-[2026-07-30 23:43:05] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
-[2026-07-30 23:43:05] INFO  [installer] Verifying Ed25519 signature
-[2026-07-30 23:43:05] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-30 23:43:05] INFO  [installer] Verification passed for MotorECU v1.0
-[2026-07-30 23:43:05] ERROR  [installer] REJECTED: downgrade blocked (1.1 -> 1.0)
-[2026-07-31 22:33:53] INFO  [installer] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
-[2026-07-31 22:33:53] INFO  [installer] Verifying Ed25519 signature
-[2026-07-31 22:33:53] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-31 22:33:53] INFO  [installer] Verification passed for MotorECU v1.1
-[2026-07-31 22:33:53] INFO  [ota] Bootloader stage v1.1
-[2026-07-31 22:33:53] INFO  [ota] Bootloader activate v1.1
-[2026-07-31 22:33:55] INFO  [ota] Health monitor grace period (32s)
-[2026-07-31 22:33:55] INFO  Started in grace period mode (post-activation)
-[2026-07-31 22:33:55] INFO  Grace period started — watching ECU for stability
-[2026-07-31 22:33:55] INFO  ECU healthy during grace period (0s/32s)
-[2026-07-31 22:33:56] INFO  ECU healthy during grace period (1s/32s)
-[2026-07-31 22:33:57] INFO  ECU healthy during grace period (2s/32s)
-[2026-07-31 22:33:58] INFO  ECU healthy during grace period (3s/32s)
-[2026-07-31 22:33:59] INFO  ECU healthy during grace period (4s/32s)
-[2026-07-31 22:34:00] INFO  ECU healthy during grace period (5s/32s)
-[2026-07-31 22:34:01] INFO  ECU healthy during grace period (6s/32s)
-[2026-07-31 22:34:02] INFO  ECU healthy during grace period (7s/32s)
-[2026-07-31 22:34:03] INFO  ECU healthy during grace period (8s/32s)
-[2026-07-31 22:34:04] INFO  ECU healthy during grace period (9s/32s)
-[2026-07-31 22:34:05] INFO  ECU healthy during grace period (10s/32s)
-[2026-07-31 22:34:06] INFO  ECU healthy during grace period (11s/32s)
-[2026-07-31 22:34:07] INFO  ECU healthy during grace period (12s/32s)
-[2026-07-31 22:34:08] INFO  ECU healthy during grace period (13s/32s)
-[2026-07-31 22:34:09] INFO  ECU healthy during grace period (14s/32s)
-[2026-07-31 22:34:10] INFO  ECU healthy during grace period (15s/32s)
-[2026-07-31 22:34:11] INFO  ECU healthy during grace period (16s/32s)
-[2026-07-31 22:34:12] INFO  ECU healthy during grace period (17s/32s)
-[2026-07-31 22:34:13] INFO  ECU healthy during grace period (18s/32s)
-[2026-07-31 22:34:14] INFO  ECU healthy during grace period (19s/32s)
-[2026-07-31 22:34:15] INFO  ECU healthy during grace period (20s/32s)
-[2026-07-31 22:34:16] INFO  ECU healthy during grace period (21s/32s)
-[2026-07-31 22:34:17] INFO  ECU healthy during grace period (22s/32s)
-[2026-07-31 22:34:18] INFO  ECU healthy during grace period (23s/32s)
-[2026-07-31 22:34:19] INFO  ECU healthy during grace period (24s/32s)
-[2026-07-31 22:34:20] INFO  ECU healthy during grace period (25s/32s)
-[2026-07-31 22:34:21] INFO  ECU healthy during grace period (26s/32s)
-[2026-07-31 22:34:22] INFO  ECU healthy during grace period (27s/32s)
-[2026-07-31 22:34:23] INFO  ECU healthy during grace period (28s/32s)
-[2026-07-31 22:34:24] INFO  ECU healthy during grace period (29s/32s)
-[2026-07-31 22:34:25] INFO  ECU healthy during grace period (30s/32s)
-[2026-07-31 22:34:26] INFO  ECU healthy during grace period (31s/32s)
-[2026-07-31 22:34:27] INFO  Grace period expired — ECU stable, activation confirmed
-[2026-07-31 22:34:27] INFO  Grace period cleared
-[2026-07-31 22:34:27] INFO  Duration reached — exiting health monitor
-[2026-07-31 22:34:27] INFO  [installer] Install complete: MotorECU v1.1
-[2026-07-31 22:35:17] INFO  [installer] Installing package: /mnt/d/sdv-ota-platform/packages/motorecu_v1.2.tar.gz
-[2026-07-31 22:35:17] INFO  [installer] Verifying Ed25519 signature
-[2026-07-31 22:35:17] INFO  [installer] Verifying SHA-256 checksum
-[2026-07-31 22:35:17] INFO  [installer] Verification passed for MotorECU v1.2
-[2026-07-31 22:35:17] INFO  [ota] Bootloader stage v1.2
-[2026-07-31 22:35:17] INFO  [ota] Bootloader activate v1.2
-[2026-07-31 22:35:19] INFO  [ota] Health monitor grace period (12s)
-[2026-07-31 22:35:19] INFO  Started in grace period mode (post-activation)
-[2026-07-31 22:35:19] INFO  Grace period started — watching ECU for stability
-[2026-07-31 22:35:19] INFO  ECU healthy during grace period (0s/12s)
-[2026-07-31 22:35:20] INFO  ECU healthy during grace period (1s/12s)
-[2026-07-31 22:35:21] INFO  ECU healthy during grace period (2s/12s)
-[2026-07-31 22:35:22] INFO  ECU healthy during grace period (3s/12s)
-[2026-07-31 22:35:23] INFO  ECU healthy during grace period (4s/12s)
-[2026-07-31 22:35:24] INFO  ECU healthy during grace period (5s/12s)
-[2026-07-31 22:35:25] INFO  ECU healthy during grace period (6s/12s)
-[2026-07-31 22:35:26] WARNING  ECU FAILED during grace period — consecutive failures: 1/3  (7s/12s)
-[2026-07-31 22:35:27] WARNING  ECU FAILED during grace period — consecutive failures: 2/3  (8s/12s)
-[2026-07-31 22:35:28] WARNING  ECU FAILED during grace period — consecutive failures: 3/3  (9s/12s)
-[2026-07-31 22:35:28] ERROR  FAILURE THRESHOLD REACHED — triggering automatic rollback
-[2026-07-31 22:35:28] INFO  Calling: bootloader rollback
-[2026-07-31 22:35:30] INFO  Rollback complete — ECU restored to previous slot
-[2026-07-31 22:35:30] INFO  Grace period cleared
-[2026-07-31 22:35:30] INFO  Rollback triggered — health monitor returning to normal mode
-[2026-07-31 22:35:31] INFO  Duration reached — exiting health monitor
-[2026-07-31 22:35:31] INFO  [installer] Install complete: MotorECU v1.2
-[2026-08-01 22:31:12] INFO  [client] Current ECU version: 1.1
-[2026-08-01 22:31:12] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
-[2026-08-01 22:31:45] INFO  [client] Current ECU version: 1.1
-[2026-08-01 22:31:45] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
-[2026-08-01 22:35:48] INFO  [client] Current ECU version: 1.1
-[2026-08-01 22:35:48] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
-[2026-08-01 22:47:24] INFO  [installer] Installing package: D:\sdv-ota-platform\Tools/output/tampered.tar.gz
-[2026-08-01 22:47:24] INFO  [installer] Verifying Ed25519 signature
-[2026-08-01 22:47:24] INFO  [installer] Verifying SHA-256 checksum
-[2026-08-01 22:47:24] ERROR  [installer] REJECTED: binary checksum mismatch
-[2026-08-01 22:47:34] INFO  [installer] Installing package: D:\sdv-ota-platform\packages\motorecu_v1.0.tar.gz
-[2026-08-01 22:47:34] INFO  [installer] Verifying Ed25519 signature
-[2026-08-01 22:47:34] ERROR  [installer] REJECTED: manifest signature invalid
-[2026-08-01 22:50:01] INFO  [client] Current ECU version: 1.1
-[2026-08-01 22:50:01] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
-[2026-08-01 23:02:57] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:03:01] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [WinError 10061] No connection could be made because the target machine actively refused it
-[2026-08-01 23:04:50] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:04:54] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [WinError 10061] No connection could be made because the target machine actively refused it
-[2026-08-01 23:05:45] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:05:49] ERROR  [client] Cannot reach OTA server at http://localhost:8080: [WinError 10061] No connection could be made because the target machine actively refused it
-[2026-08-01 23:07:56] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:07:58] INFO  [cloud] Update check for MotorECU — latest v1.2
-[2026-08-01 23:07:58] INFO  [client] No update available (current=1.1, target=1.1)
-[2026-08-01 23:10:10] INFO  [cloud] Update check for MotorECU — latest v1.2
-[2026-08-01 23:28:31] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
-[2026-08-01 23:28:31] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
-[2026-08-01 23:28:31] INFO  [fleet] [VIN001] Updating MotorECU
-[2026-08-01 23:28:31] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:28:32] ERROR  [fleet] [VIN001] MotorECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
-[2026-08-01 23:34:44] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
-[2026-08-01 23:34:44] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
-[2026-08-01 23:34:44] INFO  [fleet] [VIN001] Updating MotorECU
-[2026-08-01 23:34:44] INFO  [client] Current ECU version: 1.1
-[2026-08-01 23:34:44] ERROR  [fleet] [VIN001] MotorECU failed: Cannot reach OTA server at http://localhost:8080: [Errno 111] Connection refused
+[2026-08-03 22:36:26] INFO  [client] Current ECU version: 1.0
+[2026-08-03 22:36:26] INFO  [cloud] Update check for MotorECU — latest v1.2
+[2026-08-03 22:36:26] INFO  [client] Update available: 1.0 -> 1.1
+[2026-08-03 22:36:26] INFO  [client] Downloading http://localhost:8080/packages/MotorECU/1.1
+[2026-08-03 22:36:26] INFO  [cloud] Serving motorecu_v1.1.tar.gz
+[2026-08-03 22:36:26] INFO  [client] Downloaded to /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
+[2026-08-03 22:36:26] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
+[2026-08-03 22:36:26] INFO  [installer] Verifying Ed25519 signature
+[2026-08-03 22:36:26] INFO  [installer] Verifying SHA-256 checksum
+[2026-08-03 22:36:26] INFO  [installer] Verification passed for MotorECU v1.1
+[2026-08-03 22:36:26] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:36:26] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:36:28] INFO  [ota] Health monitor grace period (32s)
+[2026-08-03 22:36:28] INFO  Started in grace period mode (post-activation)
+[2026-08-03 22:36:28] INFO  Grace period started — watching ECU for stability
+[2026-08-03 22:36:28] INFO  ECU healthy during grace period (0s/32s)
+[2026-08-03 22:36:28] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
+[2026-08-03 22:36:28] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
+[2026-08-03 22:36:28] INFO  [fleet] [VIN001] Updating MotorECU
+[2026-08-03 22:36:28] INFO  [client] Current ECU version: 1.1
+[2026-08-03 22:36:28] INFO  [cloud] Update check for MotorECU — latest v1.2
+[2026-08-03 22:36:28] INFO  [client] No update available (current=1.1, target=1.1)
+[2026-08-03 22:36:28] INFO  [fleet] [VIN001] MotorECU: skipped
+[2026-08-03 22:36:28] INFO  [cloud] Update check for BrakeECU — latest v1.1
+[2026-08-03 22:36:28] INFO  [cloud] Serving brakeecu_v1.1.tar.gz
+[2026-08-03 22:36:28] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/brakeecu_v1.1.tar.gz
+[2026-08-03 22:36:28] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:36:28] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:36:29] INFO  ECU healthy during grace period (1s/32s)
+[2026-08-03 22:36:30] INFO  ECU healthy during grace period (2s/32s)
+[2026-08-03 22:36:30] INFO  [ota] Health monitor grace period (15s)
+[2026-08-03 22:36:31] INFO  ECU healthy during grace period (3s/32s)
+[2026-08-03 22:36:32] INFO  ECU healthy during grace period (4s/32s)
+[2026-08-03 22:36:33] INFO  ECU healthy during grace period (5s/32s)
+[2026-08-03 22:36:34] INFO  ECU healthy during grace period (6s/32s)
+[2026-08-03 22:36:35] INFO  ECU healthy during grace period (7s/32s)
+[2026-08-03 22:36:36] INFO  ECU healthy during grace period (8s/32s)
+[2026-08-03 22:36:37] INFO  ECU healthy during grace period (9s/32s)
+[2026-08-03 22:36:38] INFO  ECU healthy during grace period (10s/32s)
+[2026-08-03 22:36:39] INFO  ECU healthy during grace period (11s/32s)
+[2026-08-03 22:36:40] INFO  ECU healthy during grace period (12s/32s)
+[2026-08-03 22:36:41] INFO  ECU healthy during grace period (13s/32s)
+[2026-08-03 22:36:42] INFO  ECU healthy during grace period (14s/32s)
+[2026-08-03 22:36:43] INFO  ECU healthy during grace period (15s/32s)
+[2026-08-03 22:36:44] INFO  ECU healthy during grace period (16s/32s)
+[2026-08-03 22:36:45] INFO  ECU healthy during grace period (17s/32s)
+[2026-08-03 22:36:45] INFO  [cloud] Update check for BatteryECU — latest v1.1
+[2026-08-03 22:36:45] INFO  [cloud] Serving batteryecu_v1.1.tar.gz
+[2026-08-03 22:36:45] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/batteryecu_v1.1.tar.gz
+[2026-08-03 22:36:45] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:36:45] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:36:46] INFO  ECU healthy during grace period (18s/32s)
+[2026-08-03 22:36:47] INFO  ECU healthy during grace period (19s/32s)
+[2026-08-03 22:36:47] INFO  [ota] Health monitor grace period (15s)
+[2026-08-03 22:36:48] INFO  ECU healthy during grace period (20s/32s)
+[2026-08-03 22:36:49] INFO  ECU healthy during grace period (21s/32s)
+[2026-08-03 22:36:50] INFO  ECU healthy during grace period (22s/32s)
+[2026-08-03 22:36:51] INFO  ECU healthy during grace period (23s/32s)
+[2026-08-03 22:36:52] INFO  ECU healthy during grace period (24s/32s)
+[2026-08-03 22:36:53] INFO  ECU healthy during grace period (25s/32s)
+[2026-08-03 22:36:54] INFO  ECU healthy during grace period (26s/32s)
+[2026-08-03 22:36:55] INFO  ECU healthy during grace period (27s/32s)
+[2026-08-03 22:36:56] INFO  ECU healthy during grace period (28s/32s)
+[2026-08-03 22:36:57] INFO  ECU healthy during grace period (29s/32s)
+[2026-08-03 22:36:58] INFO  ECU healthy during grace period (30s/32s)
+[2026-08-03 22:36:59] INFO  ECU healthy during grace period (31s/32s)
+[2026-08-03 22:37:00] INFO  Grace period expired — ECU stable, activation confirmed
+[2026-08-03 22:37:00] INFO  Grace period cleared
+[2026-08-03 22:37:00] INFO  Duration reached — exiting health monitor
+[2026-08-03 22:37:00] INFO  [installer] Install complete: MotorECU v1.1
+[2026-08-03 22:37:00] INFO  [client] Current ECU version: 1.1
+[2026-08-03 22:37:00] INFO  [cloud] Update check for MotorECU — latest v1.2
+[2026-08-03 22:37:00] INFO  [client] Update available: 1.1 -> 1.2
+[2026-08-03 22:37:00] INFO  [client] Downloading http://localhost:8080/packages/MotorECU/1.2
+[2026-08-03 22:37:00] INFO  [cloud] Serving motorecu_v1.2.tar.gz
+[2026-08-03 22:37:00] INFO  [client] Downloaded to /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.2.tar.gz
+[2026-08-03 22:37:00] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.2.tar.gz
+[2026-08-03 22:37:00] INFO  [installer] Verifying Ed25519 signature
+[2026-08-03 22:37:00] INFO  [installer] Verifying SHA-256 checksum
+[2026-08-03 22:37:00] INFO  [installer] Verification passed for MotorECU v1.2
+[2026-08-03 22:37:00] INFO  [ota] Bootloader stage v1.2
+[2026-08-03 22:37:00] INFO  [ota] Bootloader activate v1.2
+[2026-08-03 22:37:02] INFO  [ota] Health monitor grace period (12s)
+[2026-08-03 22:37:02] INFO  Started in grace period mode (post-activation)
+[2026-08-03 22:37:02] INFO  Grace period started — watching ECU for stability
+[2026-08-03 22:37:02] INFO  ECU healthy during grace period (0s/12s)
+[2026-08-03 22:37:03] INFO  ECU healthy during grace period (1s/12s)
+[2026-08-03 22:37:04] INFO  ECU healthy during grace period (2s/12s)
+[2026-08-03 22:37:05] INFO  ECU healthy during grace period (3s/12s)
+[2026-08-03 22:37:06] INFO  ECU healthy during grace period (4s/12s)
+[2026-08-03 22:37:07] INFO  ECU healthy during grace period (5s/12s)
+[2026-08-03 22:37:08] INFO  ECU healthy during grace period (6s/12s)
+[2026-08-03 22:37:09] WARNING  ECU FAILED during grace period — consecutive failures: 1/3  (7s/12s)
+[2026-08-03 22:37:10] WARNING  ECU FAILED during grace period — consecutive failures: 2/3  (8s/12s)
+[2026-08-03 22:37:11] WARNING  ECU FAILED during grace period — consecutive failures: 3/3  (9s/12s)
+[2026-08-03 22:37:11] ERROR  FAILURE THRESHOLD REACHED — triggering automatic rollback
+[2026-08-03 22:37:11] INFO  Calling: bootloader rollback
+[2026-08-03 22:37:13] INFO  Rollback complete — ECU restored to previous slot
+[2026-08-03 22:37:13] INFO  Grace period cleared
+[2026-08-03 22:37:13] INFO  Rollback triggered — health monitor returning to normal mode
+[2026-08-03 22:37:14] INFO  Duration reached — exiting health monitor
+[2026-08-03 22:37:14] INFO  [installer] Install complete: MotorECU v1.2
+[2026-08-03 22:37:54] INFO  [fleet] Fleet update starting — 1 vehicle(s), 3 ECU update(s)
+[2026-08-03 22:37:54] INFO  [fleet] Vehicle VIN001: updating 3 ECU(s)
+[2026-08-03 22:37:54] INFO  [fleet] [VIN001] Updating MotorECU
+[2026-08-03 22:37:54] INFO  [client] Current ECU version: 1.0
+[2026-08-03 22:37:54] INFO  [cloud] Update check for MotorECU — latest v1.2
+[2026-08-03 22:37:54] INFO  [client] Update available: 1.0 -> 1.1
+[2026-08-03 22:37:54] INFO  [client] Downloading http://localhost:8080/packages/MotorECU/1.1
+[2026-08-03 22:37:54] INFO  [cloud] Serving motorecu_v1.1.tar.gz
+[2026-08-03 22:37:54] INFO  [client] Downloaded to /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
+[2026-08-03 22:37:54] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/motorecu_v1.1.tar.gz
+[2026-08-03 22:37:54] INFO  [installer] Verifying Ed25519 signature
+[2026-08-03 22:37:54] INFO  [installer] Verifying SHA-256 checksum
+[2026-08-03 22:37:54] INFO  [installer] Verification passed for MotorECU v1.1
+[2026-08-03 22:37:54] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:37:54] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:37:56] INFO  [ota] Health monitor grace period (15s)
+[2026-08-03 22:37:56] INFO  Started in grace period mode (post-activation)
+[2026-08-03 22:37:56] INFO  Grace period started — watching ECU for stability
+[2026-08-03 22:37:56] INFO  ECU healthy during grace period (0s/15s)
+[2026-08-03 22:37:57] INFO  ECU healthy during grace period (1s/15s)
+[2026-08-03 22:37:58] INFO  ECU healthy during grace period (2s/15s)
+[2026-08-03 22:37:59] INFO  ECU healthy during grace period (3s/15s)
+[2026-08-03 22:38:00] INFO  ECU healthy during grace period (4s/15s)
+[2026-08-03 22:38:01] INFO  ECU healthy during grace period (5s/15s)
+[2026-08-03 22:38:02] INFO  ECU healthy during grace period (6s/15s)
+[2026-08-03 22:38:03] INFO  ECU healthy during grace period (7s/15s)
+[2026-08-03 22:38:04] INFO  ECU healthy during grace period (8s/15s)
+[2026-08-03 22:38:05] INFO  ECU healthy during grace period (9s/15s)
+[2026-08-03 22:38:06] INFO  ECU healthy during grace period (10s/15s)
+[2026-08-03 22:38:07] INFO  ECU healthy during grace period (11s/15s)
+[2026-08-03 22:38:08] INFO  ECU healthy during grace period (12s/15s)
+[2026-08-03 22:38:09] INFO  ECU healthy during grace period (13s/15s)
+[2026-08-03 22:38:10] INFO  ECU healthy during grace period (14s/15s)
+[2026-08-03 22:38:11] INFO  Grace period expired — ECU stable, activation confirmed
+[2026-08-03 22:38:11] INFO  Grace period cleared
+[2026-08-03 22:38:11] INFO  Duration reached — exiting health monitor
+[2026-08-03 22:38:11] INFO  [installer] Install complete: MotorECU v1.1
+[2026-08-03 22:38:11] INFO  [fleet] [VIN001] MotorECU: updated
+[2026-08-03 22:38:11] INFO  [cloud] Update check for BrakeECU — latest v1.1
+[2026-08-03 22:38:11] INFO  [cloud] Serving brakeecu_v1.1.tar.gz
+[2026-08-03 22:38:11] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/brakeecu_v1.1.tar.gz
+[2026-08-03 22:38:11] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:38:11] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:38:13] INFO  [ota] Health monitor grace period (15s)
+[2026-08-03 22:38:28] INFO  [cloud] Update check for BatteryECU — latest v1.1
+[2026-08-03 22:38:28] INFO  [cloud] Serving batteryecu_v1.1.tar.gz
+[2026-08-03 22:38:28] INFO  [installer] Installing package: /Users/tejasangadi/Desktop/Dev/sdv-ota-platform/packages/batteryecu_v1.1.tar.gz
+[2026-08-03 22:38:28] INFO  [ota] Bootloader stage v1.1
+[2026-08-03 22:38:28] INFO  [ota] Bootloader activate v1.1
+[2026-08-03 22:38:30] INFO  [ota] Health monitor grace period (15s)

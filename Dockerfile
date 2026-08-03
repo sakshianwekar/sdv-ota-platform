@@ -17,7 +17,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip3 install --no-cache-dir cryptography fastapi "uvicorn[standard]"
+# Ubuntu 24.04 blocks system-wide pip (PEP 668); safe to override in isolated containers.
+RUN pip3 install --no-cache-dir --break-system-packages \
+    cryptography \
+    -r OTA_Cloud/requirements.txt
 
 RUN make -C Firmware/motor_ecu            && echo "motor_ecu v1.0: OK"
 RUN make -C Firmware/motor_ecu_v1.1       && echo "motor_ecu v1.1: OK"

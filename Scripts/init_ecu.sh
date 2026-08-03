@@ -50,6 +50,7 @@ init_one() {
 
     cp "$binary" "$slot_a/$fw_bin"
     cp "$binary" "$slot_b/$fw_bin"
+    chmod +x "$slot_a/$fw_bin" "$slot_b/$fw_bin"
 
     cat > "$base/config/version.json" <<'EOF'
 {

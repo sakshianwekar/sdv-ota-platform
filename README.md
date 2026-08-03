@@ -43,6 +43,8 @@ Health_Monitor (C)           ← grace-period watch → auto rollback
 
 ## Quick Start
 
+> **Interview demo?** See [Docs/INTERVIEW_DEMO.md](Docs/INTERVIEW_DEMO.md) for the full command-by-command presentation script.
+
 ### Docker (recommended)
 
 ```bash

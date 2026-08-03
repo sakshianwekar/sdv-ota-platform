@@ -28,10 +28,10 @@ services:
     volumes:
       - .:/app
       - sdv_build_cache:/app/.build_cache
-    entrypoint: bash
+    working_dir: /app
     stdin_open: true
     tty: true
-    command: []
+    command: ["/bin/bash"]
 
 volumes:
   sdv_build_cache:
