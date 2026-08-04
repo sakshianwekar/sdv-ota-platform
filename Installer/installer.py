@@ -25,29 +25,23 @@ from version_utils import is_downgrade, read_current_version  # noqa: E402
 from ecu_registry import ecu_paths, get_ecu_config  # noqa: E402
 
 
+from platform_utils import bootloader_path, health_monitor_path, resolve_binary_path  # noqa: E402
+
+
 def _bootloader_path(custom_path=None):
-    if custom_path:
-        path = custom_path
-    else:
-        exe = ".exe" if os.name == "nt" else ""
-        path = os.path.join(REPO_ROOT, f"Bootloader/build/bootloader{exe}")
-    return path
+    return bootloader_path(custom_path)
 
 
 def _health_monitor_path():
-    exe = ".exe" if os.name == "nt" else ""
-    return os.path.join(REPO_ROOT, f"Health_Monitor/build/health_monitor{exe}")
+    return health_monitor_path()
 
 
 def _run_cmd(cmd, description):
     ota_log("INFO", description)
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO_ROOT)
-    if result.stdout.strip():
-        print(result.stdout.strip())
+    result = subprocess.run(cmd, cwd=REPO_ROOT, text=True)
     if result.returncode != 0:
-        err = result.stderr.strip() or result.stdout.strip() or "unknown error"
-        ota_log("ERROR", f"{description} failed: {err}")
-        raise RuntimeError(f"{description} failed:\n{err}")
+        ota_log("ERROR", f"{description} failed (exit {result.returncode})")
+        raise RuntimeError(f"{description} failed (exit {result.returncode})")
     return result
 
 

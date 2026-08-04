@@ -52,8 +52,13 @@ static void hm_configure(const char *ecu_name)
              "Virtual_ECU/%s/runtime/heartbeat.txt", name);
     snprintf(g_ota_log_file, sizeof(g_ota_log_file),
              "Virtual_ECU/%s/logs/ota.log", name);
+#ifdef _WIN32
+    snprintf(g_bootloader_cmd, sizeof(g_bootloader_cmd),
+             "Bootloader\\build\\bootloader.exe --ecu %s", name);
+#else
     snprintf(g_bootloader_cmd, sizeof(g_bootloader_cmd),
              "./Bootloader/build/bootloader --ecu %s", name);
+#endif
 }
 
 #define HEARTBEAT_FILE g_heartbeat_file

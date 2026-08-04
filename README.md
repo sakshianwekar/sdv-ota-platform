@@ -53,7 +53,24 @@ docker compose run dev bash
 ./Scripts/run_demo.sh
 ```
 
-### Native / WSL
+### Native (Windows)
+
+**Prerequisites:** MinGW (`gcc`, `mingw32-make`), Python 3.11+ (`py -3`), `pip install cryptography`
+
+```powershell
+cd D:\sdv-ota-platform
+py -3 Scripts\build_all.py          # build all C components
+py -3 Tools\gen_keys.py             # first time only
+
+# Security tests
+py -3 Scripts\run_tests.py
+
+# Full OTA demo (~60s with --fast)
+py -3 Scripts\run_demo.py --fast
+# or: Scripts\run_demo.bat with FAST=1
+```
+
+### Native (macOS / Linux)
 
 ```bash
 # Build
@@ -62,6 +79,7 @@ make -C Firmware/motor_ecu_v1.1 rebuild
 make -C Firmware/motor_ecu_v1.2_broken rebuild
 make -C Bootloader rebuild
 make -C Health_Monitor rebuild
+# or: python3 Scripts/build_all.py
 
 python3 Tools/gen_keys.py   # first time only
 
@@ -75,8 +93,9 @@ FAST=1 ./Scripts/run_demo.sh
 
 | Script | Purpose |
 |--------|---------|
-| `./Scripts/run_demo.sh` | Full OTA happy path + rollback (local installer) |
-| `FAST=1 ./Scripts/run_demo.sh` | Skip rebuild — ~60s, suitable for recording |
+| `./Scripts/run_demo.sh` | Full OTA happy path + rollback (macOS/Linux — calls `run_demo.py`) |
+| `py -3 Scripts/run_demo.py --fast` | Same demo on Windows (or any OS) |
+| `Scripts/run_demo.bat` | Windows batch launcher |
 | `./Scripts/run_cloud_demo.sh` | Same demo via FastAPI server + OTA client |
 | `./Scripts/run_fleet_demo.sh` | Multi-ECU fleet update (MotorECU + BrakeECU + BatteryECU) |
 | `./Scripts/record_demo.sh` | Timed fast demo; `RECORD=1` saves `demo.cast` |

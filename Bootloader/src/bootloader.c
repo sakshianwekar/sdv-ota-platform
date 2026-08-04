@@ -61,12 +61,21 @@ void bl_configure(const char *ecu_name)
              "Virtual_ECU/%s/flash/slotA", name);
     snprintf(g_paths.slot_b_dir, sizeof(g_paths.slot_b_dir),
              "Virtual_ECU/%s/flash/slotB", name);
+
     strncpy(g_paths.firmware_name, fw, sizeof(g_paths.firmware_name) - 1);
     g_paths.firmware_name[sizeof(g_paths.firmware_name) - 1] = '\0';
+#ifdef _WIN32
+    {
+        size_t fw_len = strlen(g_paths.firmware_name);
+        if (fw_len + 4 < sizeof(g_paths.firmware_name)) {
+            strcat(g_paths.firmware_name, ".exe");
+        }
+    }
+#endif
     snprintf(g_paths.ecu_binary_a, sizeof(g_paths.ecu_binary_a),
-             "Virtual_ECU/%s/flash/slotA/%s", name, fw);
+             "Virtual_ECU/%s/flash/slotA/%s", name, g_paths.firmware_name);
     snprintf(g_paths.ecu_binary_b, sizeof(g_paths.ecu_binary_b),
-             "Virtual_ECU/%s/flash/slotB/%s", name, fw);
+             "Virtual_ECU/%s/flash/slotB/%s", name, g_paths.firmware_name);
     snprintf(g_paths.pidfile, sizeof(g_paths.pidfile),
              "Virtual_ECU/%s/runtime/ecu.pid", name);
     snprintf(g_paths.pending_version, sizeof(g_paths.pending_version),
@@ -99,13 +108,13 @@ static void ensure_paths(void)
  * ---------------------------------------------------------------------- */
 #ifdef _WIN32
   #include <windows.h>
-  #define PATH_SEP "\\"
+  #include <direct.h>
   #define KILL_CMD "taskkill /F /PID %ld"
-  #define START_CMD "start /B %s > NUL 2>&1"
+  #define START_CMD "start /B \"\" \"%s\" > NUL 2>&1"
   #define SLEEP_1S() Sleep(1000)
 #else
   #include <unistd.h>
-  #define PATH_SEP "/"
+  #include <sys/stat.h>
   #define KILL_CMD "kill %ld 2>/dev/null"
   #define START_CMD "%s > /dev/null 2>&1 &"
   #define SLEEP_1S() sleep(1)
@@ -179,7 +188,36 @@ static const char *get_inactive_slot(const char *active)
 static void slot_firmware_path(const char *slot, char *out, size_t out_len)
 {
     const char *dir = (strcmp(slot, "A") == 0) ? SLOT_A_DIR : SLOT_B_DIR;
-    snprintf(out, out_len, "%s" PATH_SEP "%s", dir, FIRMWARE_FILENAME);
+    snprintf(out, out_len, "%s/%s", dir, FIRMWARE_FILENAME);
+}
+
+static int ensure_dir_exists(const char *path)
+{
+#ifdef _WIN32
+    char tmp[512];
+    strncpy(tmp, path, sizeof(tmp) - 1);
+    tmp[sizeof(tmp) - 1] = '\0';
+    for (char *p = tmp + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            *p = '\0';
+            _mkdir(tmp);
+            *p = '/';
+        }
+    }
+    return _mkdir(tmp) == 0 || GetFileAttributesA(tmp) != INVALID_FILE_ATTRIBUTES;
+#else
+    char tmp[512];
+    strncpy(tmp, path, sizeof(tmp) - 1);
+    tmp[sizeof(tmp) - 1] = '\0';
+    for (char *p = tmp + 1; *p; p++) {
+        if (*p == '/') {
+            *p = '\0';
+            mkdir(tmp, 0755);
+            *p = '/';
+        }
+    }
+    return mkdir(tmp, 0755) == 0 || access(tmp, F_OK) == 0;
+#endif
 }
 
 /*
@@ -330,6 +368,9 @@ int bl_stage(const char *firmware_path)
     /* Build destination path */
     char dst[512];
     slot_firmware_path(inactive, dst, sizeof(dst));
+
+    const char *inactive_dir = (strcmp(inactive, "A") == 0) ? SLOT_A_DIR : SLOT_B_DIR;
+    ensure_dir_exists(inactive_dir);
 
     /* Copy firmware into inactive slot */
     if (copy_file(firmware_path, dst) != 0) {

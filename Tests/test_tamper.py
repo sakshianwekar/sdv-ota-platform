@@ -12,13 +12,14 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "Tools"))
 sys.path.insert(0, os.path.join(REPO_ROOT, "Installer"))
 
+from platform_utils import resolve_binary_path  # noqa: E402
 from sign_manifest import build_and_sign_manifest, load_private_key  # noqa: E402
 from verify_manifest import load_public_key, verify_checksum, verify_signature  # noqa: E402
 
 priv = load_private_key(os.path.join(REPO_ROOT, "Tools/keys/ota_signing_key.pem"))
 pub = load_public_key(os.path.join(REPO_ROOT, "Tools/keys/ota_public_key.pem"))
 
-binary = os.path.join(REPO_ROOT, "Firmware/motor_ecu_v1.1/build/motor_ecu")
+binary = resolve_binary_path("Firmware/motor_ecu_v1.1/build/motor_ecu")
 if not os.path.isfile(binary):
     print(f"SKIP: binary not built ({binary})")
     sys.exit(0)

@@ -3,15 +3,14 @@ import sys, os, copy
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO_ROOT, "Tools"))
 
-from sign_manifest import build_and_sign_manifest, load_private_key
-from verify_manifest import verify_signature, verify_checksum, load_public_key
+from platform_utils import resolve_binary_path  # noqa: E402
+from sign_manifest import build_and_sign_manifest, load_private_key  # noqa: E402
+from verify_manifest import verify_signature, verify_checksum, load_public_key  # noqa: E402
 
 priv = load_private_key(os.path.join(REPO_ROOT, "Tools/keys/ota_signing_key.pem"))
 pub = load_public_key(os.path.join(REPO_ROOT, "Tools/keys/ota_public_key.pem"))
 
-binary = os.path.join(REPO_ROOT, "Firmware/motor_ecu_v1.1/build/motor_ecu")
-if os.name == "nt" and not os.path.isfile(binary):
-    binary = binary + ".exe"
+binary = resolve_binary_path("Firmware/motor_ecu_v1.1/build/motor_ecu")
 
 if not os.path.isfile(binary):
     print(f"SKIP: binary not built yet ({binary})")
