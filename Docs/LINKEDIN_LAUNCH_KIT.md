@@ -10,13 +10,26 @@ Repo: https://github.com/sakshianwekar/sdv-ota-platform
 
 ---
 
-## A. What to prepare (checklist)
+## A. Ready-made assets (already generated)
+
+| Asset | Path | Use on LinkedIn |
+|-------|------|-----------------|
+| **PDF carousel (9 slides)** | [`Docs/linkedin-assets/sdv-ota-linkedin-carousel.pdf`](linkedin-assets/sdv-ota-linkedin-carousel.pdf) | Sakshi posts as **Document** |
+| **Architecture diagram** | [`Docs/linkedin-assets/ota-architecture-diagram.png`](linkedin-assets/ota-architecture-diagram.png) | Tejas video / image posts; also embedded in PDF slide 4 |
+| Slide previews | `Docs/linkedin-assets/preview/slide-01.png` … `slide-09.png` | Quick visual check before posting |
+
+Regenerate anytime:
+
+```bash
+pip install reportlab pillow
+python3 Scripts/generate_linkedin_assets.py
+```
+
+## A2. What else to prepare
 
 | Asset | Format | Tool | Owner |
 |-------|--------|------|-------|
-| Case-study carousel | PDF (7–9 slides) | Canva or PowerPoint | Sakshi |
 | Animated explainer | MP4 (45–75 sec) | CapCut or Canva Video | Tejas |
-| Architecture diagram | PNG inside PDF/video | Canva / draw.io / Excalidraw | Either |
 | Demo proof screenshot | PNG (optional) | Terminal screenshot | Either |
 | Captions + comments | Text | This file | Both |
 
@@ -24,34 +37,19 @@ Repo: https://github.com/sakshianwekar/sdv-ota-platform
 
 ## B. How to prepare with tools
 
-### 1) PDF carousel (Canva — recommended)
+### 1) PDF carousel
 
-1. Go to [canva.com](https://www.canva.com) → **Create** → **Custom size** → `1080 x 1350 px` (portrait) or `1080 x 1080`.
-2. Search template: **“LinkedIn carousel”** or start blank.
-3. Create **9 pages** (one idea per page). Copy text from **Section C** below.
-4. Style tips:
-   - Dark navy / charcoal background OR clean white + one accent (teal or steel blue)
-   - Large title (keep under ~10 words per slide)
-   - Avoid purple glow / emoji spam
-5. **Share → Download → PDF Standard** (multi-page PDF).
-6. LinkedIn: **Start a post → Document (paperclip/document icon) → upload PDF**.
+**Ready file:** `Docs/linkedin-assets/sdv-ota-linkedin-carousel.pdf`
 
-**PowerPoint / Google Slides alternative**
-1. New presentation → set slide size to **Widescreen** or custom 1080×1350 if available.
-2. One slide = one carousel page (use Section C text).
-3. **File → Export → PDF**.
-4. Upload that PDF on LinkedIn as a Document.
+On LinkedIn: **Start a post → Document → upload this PDF**.
 
-### 2) Architecture diagram (draw.io / Excalidraw / Canva)
+To redesign later in Canva: Custom size `1080 x 1350`, copy Section C text, or start from the generated PDF slides.
 
-Boxes left → right:
+### 2) Architecture diagram
 
-`OTA Cloud (FastAPI)` → `OTA Client` → `Installer` → `Bootloader (C)` → `Virtual ECU` → `Health Monitor`
+**Ready file:** `Docs/linkedin-assets/ota-architecture-diagram.png`
 
-Under Bootloader note: `stage / activate / rollback`  
-Under Health Monitor note: `heartbeat fail → auto-rollback`
-
-Export **PNG**, drop into carousel slide 3 and/or video.
+Use in Tejas’s video, as a standalone image post, or when redesigning slides.
 
 ### 3) Animated video (CapCut — recommended)
 
