@@ -73,12 +73,16 @@ def download_and_install(server_url, update_info, activate=False, grace_duration
     download_url = f"{server_url.rstrip('/')}{update_info['download_url']}"
     ota_log("INFO", f"Downloading {download_url}", component="client", ecu=ecu)
 
-    os.makedirs(os.path.join(REPO_ROOT, "packages"), exist_ok=True)
+    packages_dir = os.path.join(REPO_ROOT, "packages")
+    os.makedirs(packages_dir, exist_ok=True)
     local_name = update_info.get("package") or f"{update_info['ecu'].lower()}_v{update_info['version']}.tar.gz"
-    local_path = os.path.join(REPO_ROOT, "packages", local_name)
+    local_path = os.path.join(packages_dir, local_name)
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".tar.gz") as tmp:
-        tmp_path = tmp.name
+    # Create the temp file in packages/ so the final move stays on the same
+    # drive. os.replace() fails on Windows with WinError 17 when moving from
+    # %TEMP% (often C:) to a project on another drive (e.g. D:).
+    fd, tmp_path = tempfile.mkstemp(prefix="ota_dl_", suffix=".tar.gz", dir=packages_dir)
+    os.close(fd)
 
     try:
         _download(download_url, tmp_path)
