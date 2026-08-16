@@ -127,10 +127,13 @@ motorecu_v1.1.tar.gz
 └── manifest.json     # {version, ecu, size, checksum, signature}
 ```
 
-Signing details are documented in [signing.md](./signing.md).
+Signing convention:
 
+- Algorithm: Ed25519
+- Signed payload: JSON of `version`, `ecu`, `size`, `checksum` with `sort_keys=True` (`signature` excluded)
+- Encoding: `ed25519:<base64>` for the signature, `sha256:<hex>` for the checksum
 - **Private key:** `Tools/keys/ota_signing_key.pem` (gitignored, generated locally)
-- **Public key:** `Tools/keys/ota_public_key.pem` (committed, used by installer for verification)
+- **Public key:** `Tools/keys/ota_public_key.pem` (committed, used by the installer for verification)
 
 ---
 
@@ -812,5 +815,3 @@ Bootloader accepts `--ecu MotorECU|BrakeECU|BatteryECU` on every command.
 ## Related Documentation
 
 - [TESTING.md](./TESTING.md) — how to test the project end to end
-- [DEMO_COMMANDS.md](./DEMO_COMMANDS.md) — commands to demonstrate the project to others
-- [signing.md](./signing.md) — manifest signing convention

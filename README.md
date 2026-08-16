@@ -43,8 +43,6 @@ Health_Monitor (C)           ← grace-period watch → auto rollback
 
 ## Quick Start
 
-> **Interview demo?** See [Docs/INTERVIEW_DEMO.md](Docs/INTERVIEW_DEMO.md) for the full command-by-command presentation script.
-
 ### Docker (recommended)
 
 ```bash
@@ -58,7 +56,6 @@ docker compose run dev bash
 **Prerequisites:** MinGW (`gcc`, `mingw32-make`), Python 3.11+ (`py -3`), `pip install cryptography`
 
 ```powershell
-cd D:\sdv-ota-platform
 py -3 Scripts\build_all.py          # build all C components
 py -3 Tools\gen_keys.py             # first time only
 
@@ -327,24 +324,24 @@ curl http://localhost:8080/catalog
 
 ---
 
-## Interview Talking Points
+## Design rationale
 
-**"How do you know the update is genuine?"**
-> Ed25519 signing. Every package has a SHA-256 checksum and an Ed25519 signature. The client verifies the signature against the stored public key before doing anything. Checksum = integrity. Signature = authenticity. You need both.
+**How do you know the update is genuine?**
+Ed25519 signing. Every package has a SHA-256 checksum and an Ed25519 signature. The client verifies the signature against the stored public key before doing anything. Checksum = integrity. Signature = authenticity. You need both.
 
-**"What happens if a bad update is deployed?"**
-> The Health Monitor watches the ECU heartbeat for a configurable grace period after activation. Three consecutive failures trigger automatic `bootloader rollback` — the system flips back to the previous slot and restarts the ECU. Zero manual steps.
+**What happens if a bad update is deployed?**
+The Health Monitor watches the ECU heartbeat for a configurable grace period after activation. Three consecutive failures trigger automatic `bootloader rollback` — the system flips back to the previous slot and restarts the ECU. Zero manual steps.
 
-**"Why A/B slots?"**
-> You never overwrite running firmware. The new update goes into the inactive slot first. Only after the health check confirms stability does the system commit. The old firmware is always intact in the other slot.
+**Why A/B slots?**
+You never overwrite running firmware. The new update goes into the inactive slot first. Only after the health check confirms stability does the system commit. The old firmware is always intact in the other slot.
 
 ---
 
-## Resume Bullets (Phase 21)
+## Project highlights
 
-- Built a virtual ECU OTA platform with A/B slot bootloader, Ed25519-signed packages, and automatic health-checked rollback — full pipeline from cloud server to flash, no hardware required
-- Implemented downgrade protection and tamper rejection (signature + checksum verification) before firmware reaches flash slots
-- Designed grace-period health monitoring with consecutive-failure threshold triggering zero-touch rollback, mirroring production automotive OTA safety patterns
+- Virtual ECU OTA platform with A/B slot bootloader, Ed25519-signed packages, and automatic health-checked rollback — full pipeline from cloud server to flash, no hardware required
+- Downgrade protection and tamper rejection (signature + checksum verification) before firmware reaches flash slots
+- Grace-period health monitoring with consecutive-failure threshold triggering zero-touch rollback, mirroring production automotive OTA safety patterns
 
 ---
 

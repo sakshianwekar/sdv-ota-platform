@@ -546,7 +546,4 @@ RECORD=1 ./Scripts/record_demo.sh
 
 ## Related Documentation
 
-- [INTERVIEW_DEMO.md](./INTERVIEW_DEMO.md) — interview presentation script with all commands
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — system design and code flow
-- [DEMO_COMMANDS.md](./DEMO_COMMANDS.md) — commands for live demonstrations
-- [signing.md](./signing.md) — manifest signing convention
